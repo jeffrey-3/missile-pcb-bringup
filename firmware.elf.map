@@ -1,0 +1,180 @@
+
+Discarded input sections
+
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .group         0x00000000        0xc /tmp/ccxgGPMd.o
+ .text          0x00000000        0x0 /tmp/ccxgGPMd.o
+ .data          0x00000000        0x0 /tmp/ccxgGPMd.o
+ .bss           0x00000000        0x0 /tmp/ccxgGPMd.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+flash            0x08000000         0x00010000         xr
+sram             0x20000000         0x00002000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /tmp/ccxgGPMd.o
+LOAD /usr/lib/gcc/arm-none-eabi/14.2.1/../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a
+LOAD /usr/lib/gcc/arm-none-eabi/14.2.1/thumb/v6-m/nofp/libgcc.a
+                0x20002000                        _estack = (ORIGIN (sram) + LENGTH (sram))
+
+.vectors        0x08000000       0xc0
+ *(.vectors)
+ .vectors       0x08000000       0xc0 /tmp/ccxgGPMd.o
+                0x08000000                tab
+
+.text           0x080000c0      0x150
+ *(.text*)
+ .text.SysTick_Handler
+                0x080000c0       0x10 /tmp/ccxgGPMd.o
+                0x080000c0                SysTick_Handler
+ .text.timer_expired
+                0x080000d0       0x28 /tmp/ccxgGPMd.o
+                0x080000d0                timer_expired
+ .text.startup.main
+                0x080000f8       0xe0 /tmp/ccxgGPMd.o
+                0x080000f8                main
+ .text._reset   0x080001d8       0x38 /tmp/ccxgGPMd.o
+                0x080001d8                _reset
+
+.glue_7         0x08000210        0x0
+ .glue_7        0x08000210        0x0 linker stubs
+
+.glue_7t        0x08000210        0x0
+ .glue_7t       0x08000210        0x0 linker stubs
+
+.vfp11_veneer   0x08000210        0x0
+ .vfp11_veneer  0x08000210        0x0 linker stubs
+
+.v4_bx          0x08000210        0x0
+ .v4_bx         0x08000210        0x0 linker stubs
+
+.iplt           0x08000210        0x0
+ .iplt          0x08000210        0x0 /tmp/ccxgGPMd.o
+
+.rodata         0x08000210        0x5
+ *(.rodata*)
+ .rodata.main.str1.1
+                0x08000210        0x5 /tmp/ccxgGPMd.o
+
+.rel.dyn        0x08000218        0x0
+ .rel.iplt      0x08000218        0x0 /tmp/ccxgGPMd.o
+
+.data           0x20000000        0x0 load address 0x08000215
+                0x20000000                        _sdata = .
+ *(.first_data)
+ *(.data SORT_BY_NAME(.data.*))
+                0x20000000                        _edata = .
+                0x08000215                        _sidata = LOADADDR (.data)
+
+.igot.plt       0x20000000        0x0 load address 0x08000215
+ .igot.plt      0x20000000        0x0 /tmp/ccxgGPMd.o
+
+.bss            0x20000000        0x8 load address 0x08000215
+                0x20000000                        _sbss = .
+ *(.bss SORT_BY_NAME(.bss.*) COMMON)
+ .bss.on.0      0x20000000        0x1 /tmp/ccxgGPMd.o
+ *fill*         0x20000001        0x3 
+ .bss.s_ticks   0x20000004        0x4 /tmp/ccxgGPMd.o
+                0x20000008                        _ebss = .
+                0x20000008                        . = ALIGN (0x8)
+                0x20000008                        _end = .
+OUTPUT(firmware.elf elf32-littlearm)
+LOAD linker stubs
+
+.debug_info     0x00000000      0x8d4
+ .debug_info    0x00000000      0x8d4 /tmp/ccxgGPMd.o
+
+.debug_abbrev   0x00000000      0x2fc
+ .debug_abbrev  0x00000000      0x2fc /tmp/ccxgGPMd.o
+
+.debug_loclists
+                0x00000000      0x257
+ .debug_loclists
+                0x00000000      0x257 /tmp/ccxgGPMd.o
+
+.debug_aranges  0x00000000       0x38
+ .debug_aranges
+                0x00000000       0x38 /tmp/ccxgGPMd.o
+
+.debug_rnglists
+                0x00000000       0xb4
+ .debug_rnglists
+                0x00000000       0xb4 /tmp/ccxgGPMd.o
+
+.debug_macro    0x00000000     0x1ead
+ .debug_macro   0x00000000      0x176 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000176      0xaa2 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000c18       0x22 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000c3a       0x54 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000c8e       0x24 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000cb2       0x94 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000d46       0x43 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000d89      0x103 /tmp/ccxgGPMd.o
+ .debug_macro   0x00000e8c       0x3a /tmp/ccxgGPMd.o
+ .debug_macro   0x00000ec6      0x34e /tmp/ccxgGPMd.o
+ .debug_macro   0x00001214       0x89 /tmp/ccxgGPMd.o
+ .debug_macro   0x0000129d      0x379 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001616       0x22 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001638       0x16 /tmp/ccxgGPMd.o
+ .debug_macro   0x0000164e       0xa5 /tmp/ccxgGPMd.o
+ .debug_macro   0x000016f3       0x9b /tmp/ccxgGPMd.o
+ .debug_macro   0x0000178e       0x57 /tmp/ccxgGPMd.o
+ .debug_macro   0x000017e5      0x364 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001b49       0x16 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001b5f       0x4a /tmp/ccxgGPMd.o
+ .debug_macro   0x00001ba9       0x34 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001bdd       0x10 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001bed       0x52 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001c3f       0x8e /tmp/ccxgGPMd.o
+ .debug_macro   0x00001ccd       0x1c /tmp/ccxgGPMd.o
+ .debug_macro   0x00001ce9      0x185 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001e6e       0x16 /tmp/ccxgGPMd.o
+ .debug_macro   0x00001e84       0x29 /tmp/ccxgGPMd.o
+
+.debug_line     0x00000000      0x531
+ .debug_line    0x00000000      0x531 /tmp/ccxgGPMd.o
+
+.debug_str      0x00000000     0x7f73
+ .debug_str     0x00000000     0x7f73 /tmp/ccxgGPMd.o
+                               0x81a0 (size before relaxing)
+
+.comment        0x00000000       0x26
+ .comment       0x00000000       0x26 /tmp/ccxgGPMd.o
+                                 0x27 (size before relaxing)
+
+.ARM.attributes
+                0x00000000       0x2c
+ .ARM.attributes
+                0x00000000       0x2c /tmp/ccxgGPMd.o
+
+.debug_frame    0x00000000       0x70
+ .debug_frame   0x00000000       0x70 /tmp/ccxgGPMd.o
