@@ -18,3 +18,6 @@ flash: firmware.bin
 
 clean:
 	rm -rf firmware.*
+
+openocd:
+	openocd -f /usr/share/openocd/scripts/interface/stlink.cfg -f /usr/share/openocd/scripts/target/stm32g0x.cfg

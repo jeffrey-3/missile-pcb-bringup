@@ -117,8 +117,8 @@ bool timer_expired(uint32_t *t, uint32_t prd, uint32_t now) {
 int main(void) {
 	systick_init(16000000 / 1000); // Tick every 1ms
 	
-	uint16_t tx = PIN('B', '6');
-	uint16_t rx = PIN('B', '7');
+	uint16_t tx = PIN('B', 6);
+	uint16_t rx = PIN('B', 7);
 	uint8_t af = 0;
 	uart_init(UART1, af, rx, tx, 115200);
 
