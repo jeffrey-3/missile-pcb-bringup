@@ -7,11 +7,11 @@ void _systick_handler(void) {
 }
 
 void systick_init(uint32_t ticks) {
-	if ((ticks - 1) > 0xffffff) return; // Systick timer is 24 bit
-	SYSTICK->LOAD = ticks - 1;
-	SYSTICK->VAL = 0;
-	SYSTICK->CTRL = BIT(0) | BIT(1) | BIT(2); // Enable systick
-	RCC->APBENR2 |= BIT(0); // Enable SYSCFG
+        if ((ticks - 1) > 0xffffff) return; // Systick timer is 24 bit
+        SYSTICK->LOAD = ticks - 1;
+        SYSTICK->VAL = 0;
+        SYSTICK->CTRL = BIT(0) | BIT(1) | BIT(2); // Enable systick
+        RCC->APBENR2 |= BIT(0); // Enable SYSCFG
 }
 
 /**
@@ -35,37 +35,37 @@ bool timer_expired(uint32_t *t, uint32_t prd) {
 }
 
 void spin(volatile uint32_t count) {
-	while (count--) asm("nop");
+        while (count--) asm("nop");
 }
 
 void gpio_set_mode(uint16_t pin, uint8_t mode) {
-	struct gpio *gpio = GPIO(PINBANK(pin)); // GPIO bank
-	int n = PINNO(pin); // Pin number
-  	RCC->IOPENR |= BIT(PINBANK(pin)); // Enable GPIO clock
-	gpio->MODER &= ~(3U << (n * 2)); // Clear existing setting
-	gpio->MODER |= (mode & 3) << (n * 2); // Set new mode
+        struct gpio *gpio = GPIO(PINBANK(pin)); // GPIO bank
+        int n = PINNO(pin); // Pin number
+        RCC->IOPENR |= BIT(PINBANK(pin)); // Enable GPIO clock
+        gpio->MODER &= ~(3U << (n * 2)); // Clear existing setting
+        gpio->MODER |= (mode & 3) << (n * 2); // Set new mode
 }
 
 void gpio_write(uint16_t pin, bool val) {
-	struct gpio *gpio = GPIO(PINBANK(pin));
-	gpio->BSRR = (1U << PINNO(pin)) << (val ? 0 : 16);
+        struct gpio *gpio = GPIO(PINBANK(pin));
+        gpio->BSRR = (1U << PINNO(pin)) << (val ? 0 : 16);
 }
 
 void gpio_set_af(uint16_t pin, uint8_t af_num) {
-	struct gpio *gpio = GPIO(PINBANK(pin)); // GPIO bank
-	int n = PINNO(pin); // Pin number
-	gpio->AFR[n >> 3] &= ~(15UL << ((n & 7) * 4));
+        struct gpio *gpio = GPIO(PINBANK(pin)); // GPIO bank
+        int n = PINNO(pin); // Pin number
+        gpio->AFR[n >> 3] &= ~(15UL << ((n & 7) * 4));
         gpio->AFR[n >> 3] |= ((uint32_t) af_num) << ((n & 7) * 4);
 }
 
 void uart_init(struct uart *uart, unsigned long baud) {
-	if (uart == UART1) {
-		RCC->APBENR2 |= BIT(14);
-	}
+        if (uart == UART1) {
+                RCC->APBENR2 |= BIT(14);
+        }
 
-	uart->CR1 = 0; // Disable this UART
-	uart->BRR = FREQ / baud; // FREQ is a UART bus frequency
-	uart->CR1 |= BIT(0) | BIT(2) | BIT(3); // Set UE, RE, TE
+        uart->CR1 = 0; // Disable this UART
+        uart->BRR = FREQ / baud; // FREQ is a UART bus frequency
+        uart->CR1 |= BIT(0) | BIT(2) | BIT(3); // Set UE, RE, TE
 }
 
 void uart_write_byte(struct uart *uart, uint8_t byte) {
@@ -94,6 +94,9 @@ void spi_init(struct spi *spi) {
 
       spi->CR1 |= BIT(2); // Set as master
       spi->CR1 |= BIT(9); // Enable SSM to toggle CS manually
+      spi->CR1 |= BIT(1); // Set CPOL to high when idle
+      spi->CR1 |= BIT(0); // Set CPHA to 1
+      spi->CR1 |= BIT(5); // Set clock speed to CPU_FREQ / 32
       spi->CR2 |= BIT(12); // Trigger RXNE at 8-bit FIFO
       spi->CR1 |= BIT(6); // SPI peripheral enable
 }

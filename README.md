@@ -6,6 +6,16 @@ gdb-multiarch firmware.elf
 
 list source code around current execution line: l
 
+b line_number or break function_name
+
+s to step (execute next line, if its a function then go into function call), n for next (don't step into it)
+
+c to continue
+
+ctrl+c to stop
+
+quit to exit gdb
+
 # Serial monitor
 
 cu -l /dev/ttyACM0 -s 115200
@@ -45,3 +55,7 @@ Copy multiple lines to clipboard: go to visual, select lines, "+y
 :term to open horizontal split terminal
 
 :e filename to switch files
+
+:set list and :set nolist to view whitespace
+
+:retab to fix tabs

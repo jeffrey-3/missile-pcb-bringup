@@ -1,46 +1,46 @@
 #include "hal.h"
 
 void test_uart() {
-	uint16_t tx = PIN('B', 6);
-	gpio_set_mode(tx, GPIO_MODE_AF);
-	gpio_set_af(tx, 0);
+        uint16_t tx = PIN('B', 6);
+        gpio_set_mode(tx, GPIO_MODE_AF);
+        gpio_set_af(tx, 0);
 
-	uint16_t rx = PIN('B', 7);
-	gpio_set_mode(rx, GPIO_MODE_AF);
-	gpio_set_af(tx, 0);
-	
-	uart_init(UART1, 115200);
+        uint16_t rx = PIN('B', 7);
+        gpio_set_mode(rx, GPIO_MODE_AF);
+        gpio_set_af(rx, 0);
+        
+        uart_init(UART1, 115200);
 
-	uint16_t led = PIN('B', 9);
-	gpio_set_mode(led, GPIO_MODE_OUTPUT);
+        uint16_t led = PIN('B', 9);
+        gpio_set_mode(led, GPIO_MODE_OUTPUT);
 
-	uint32_t timer = 0;
-	uint32_t period = 200; // 200ms
-	for (;;) {
-		if (timer_expired(&timer, period)) {
-			static bool on;
-			gpio_write(led, on);
-			on = !on;
-			uart_write_buf(UART1, "hi\r\n", 4);
-		}
-	}
+        uint32_t timer = 0;
+        uint32_t period = 200; // 200ms
+        for (;;) {
+                if (timer_expired(&timer, period)) {
+                        static bool on;
+                        gpio_write(led, on);
+                        on = !on;
+                        uart_write_buf(UART1, "hi\r\n", 4);
+                }
+        }
 }
 
 void test_imu() {
         // UART
-	uint16_t tx = PIN('B', 6);
-	gpio_set_mode(tx, GPIO_MODE_AF);
-	gpio_set_af(tx, 0);
+        uint16_t tx = PIN('B', 6);
+        gpio_set_mode(tx, GPIO_MODE_AF);
+        gpio_set_af(tx, 0);
 
-	uint16_t rx = PIN('B', 7);
-	gpio_set_mode(rx, GPIO_MODE_AF);
-	gpio_set_af(rx, 0);
-	
-	uart_init(UART1, 115200);
+        uint16_t rx = PIN('B', 7);
+        gpio_set_mode(rx, GPIO_MODE_AF);
+        gpio_set_af(rx, 0);
+        
+        uart_init(UART1, 115200);
 
         // LED
-	uint16_t led = PIN('B', 9);
-	gpio_set_mode(led, GPIO_MODE_OUTPUT);
+        uint16_t led = PIN('B', 9);
+        gpio_set_mode(led, GPIO_MODE_OUTPUT);
 
         // SPI
         uint16_t cs = PIN('A', 1);
@@ -62,7 +62,7 @@ void test_imu() {
         spi_init(SPI1);
 
         uint8_t data = 0; // WHO_AM_I should be 0xE9
-        uint8_t reg_address = 0x72;
+        uint8_t reg_address = 0x72 | 0x80;
 
         uint32_t timer = 0;
         uint32_t period = 1000;
@@ -85,8 +85,8 @@ void test_imu() {
 int main(void) {
         systick_init(FREQ / 1000); // Tick every 1ms
 
-        test_uart();	
-        // test_imu();
+        // test_uart(); 
+        test_imu();
 
-  	return 0;
+        return 0;
 }
