@@ -61,7 +61,7 @@ struct spi {
 #define SPI1 ((struct spi *) 0x40013000)
 
 void spi_init(struct spi *spi);
-void spi_write(struct spi *spi, uint8_t *data, size_t len, uint16_t cs);
-void spi_read(struct spi *spi, uint8_t *data, size_t len, uint16_t cs);
+void spi_write(struct spi *spi, uint8_t *data, size_t len);
+void spi_read(struct spi *spi, uint8_t *data, size_t len);
 
 #endif /* HAL_H */

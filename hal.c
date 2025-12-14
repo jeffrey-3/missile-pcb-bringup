@@ -98,9 +98,7 @@ void spi_init(struct spi *spi) {
       spi->CR1 |= BIT(6); // SPI peripheral enable
 }
 
-void spi_write(struct spi *spi, uint8_t *data, size_t len, uint16_t cs) {
-        gpio_write(cs, false);
-        
+void spi_write(struct spi *spi, uint8_t *data, size_t len) {
         while (len-- > 0) {
                 // Wait until TXE bit is set
                 while (!(spi->SR & BIT(1))) spin(1);
@@ -115,13 +113,9 @@ void spi_write(struct spi *spi, uint8_t *data, size_t len, uint16_t cs) {
         while ((spi->SR & BIT(0))) {
                 (void) spi->DR;
         }
-
-        gpio_write(cs, true);
 }
 
-void spi_read(struct spi *spi, uint8_t *data, size_t len, uint16_t cs) {
-        gpio_write(cs, false);
-
+void spi_read(struct spi *spi, uint8_t *data, size_t len) {
         while (len-- > 0) {
                 // Wait until TXE bit is set
                 while (!(spi->SR & BIT(1))) spin(1); 
@@ -133,6 +127,4 @@ void spi_read(struct spi *spi, uint8_t *data, size_t len, uint16_t cs) {
         
                 *data++ = *((volatile uint8_t*) &(spi->DR));
         }
-
-        gpio_write(cs, true);
 }

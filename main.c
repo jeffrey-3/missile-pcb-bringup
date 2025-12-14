@@ -72,8 +72,10 @@ void test_imu() {
                         gpio_write(led, on);
                         on = !on;
 
-                        spi_write(SPI1, &reg_address, 1, cs);
-                        spi_read(SPI1, &data, 1, cs);
+                        gpio_write(cs, false);
+                        spi_write(SPI1, &reg_address, 1);
+                        spi_read(SPI1, &data, 1);
+                        gpio_write(cs, true);
                         
                         uart_write_buf(UART1, (char *)&data, 1);
                 }
