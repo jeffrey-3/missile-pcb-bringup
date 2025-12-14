@@ -1,7 +1,9 @@
 #include "hal.h"
 
-void spin(volatile uint32_t count) {
-	while (count--) asm("nop");
+static volatile uint32_t s_ticks;
+
+void _systick_handler(void) {
+        s_ticks++;
 }
 
 void systick_init(uint32_t ticks) {
@@ -17,17 +19,23 @@ void systick_init(uint32_t ticks) {
  * 
  * @param t Expiration time
  * @param prd Period
- * @param now Current time
  *
  * @return true Expired
  * @return false Not expired
  */
-bool timer_expired(uint32_t *t, uint32_t prd, uint32_t now) {
-        if (now + prd < *t) *t = 0; // Time wrapped? Reset timer
-        if (*t == 0) *t = now + prd; // First poll? Set expiration
-        if (*t > now) return false; // Not expired yet, return
-        *t = (now - *t) > prd ? now + prd : *t + prd; // Next expiration time
+bool timer_expired(uint32_t *t, uint32_t prd) {
+        if (s_ticks + prd < *t) *t = 0; // Time wrapped? Reset timer
+        if (*t == 0) *t = s_ticks + prd; // First poll? Set expiration
+        if (*t > s_ticks) return false; // Not expired yet, return
+        
+        // Next expiration time
+        *t = (s_ticks - *t) > prd ? s_ticks + prd : *t + prd; 
+        
         return true; // Expired, return true
+}
+
+void spin(volatile uint32_t count) {
+	while (count--) asm("nop");
 }
 
 void gpio_set_mode(uint16_t pin, uint8_t mode) {
@@ -46,10 +54,8 @@ void gpio_write(uint16_t pin, bool val) {
 void gpio_set_af(uint16_t pin, uint8_t af_num) {
 	struct gpio *gpio = GPIO(PINBANK(pin)); // GPIO bank
 	int n = PINNO(pin); // Pin number
-	if (n < 9) {
-		gpio->AFR[n >> 3] &= ~(15UL << ((n & 7) * 4));
-		gpio->AFR[n >> 3] |= ((uint32_t) af_num) << ((n & 7) * 4);
-	}
+	gpio->AFR[n >> 3] &= ~(15UL << ((n & 7) * 4));
+	gpio->AFR[n >> 3] |= ((uint32_t) af_num) << ((n & 7) * 4);
 }
 
 void uart_init(struct uart *uart, uint8_t af, uint16_t rx,
@@ -79,9 +85,18 @@ void uart_write_buf(struct uart *uart, char *buf, size_t len) {
 }
 
 int uart_read_ready(struct uart *uart) {
-        return uart->ISR & BIT(5);  // If RXNE bit is set, data is ready
+        return uart->ISR & BIT(5); // If RXNE bit is set, data is ready
 }
 
 uint8_t uart_read_byte(struct uart *uart) {
         return (uint8_t) (uart->RDR & 255);
+}
+
+void spi_init() {
+
+}
+
+void spi_write(uint16_t cs) {
+        gpio_write(cs, false);
+        gpio_write(cs, true);
 }
