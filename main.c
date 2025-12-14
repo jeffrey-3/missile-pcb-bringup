@@ -34,7 +34,7 @@ void test_imu() {
 
 	uint16_t rx = PIN('B', 7);
 	gpio_set_mode(rx, GPIO_MODE_AF);
-	gpio_set_af(tx, 0);
+	gpio_set_af(rx, 0);
 	
 	uart_init(UART1, 115200);
 
@@ -85,8 +85,8 @@ void test_imu() {
 int main(void) {
         systick_init(FREQ / 1000); // Tick every 1ms
 
-        // test_uart();	
-        test_imu();
+        test_uart();	
+        // test_imu();
 
   	return 0;
 }

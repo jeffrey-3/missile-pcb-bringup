@@ -1,8 +1,12 @@
-openocd -f /usr/share/openocd/scripts/interface/stlink.cfg -f /usr/share/openocd/scripts/target/stm32g0x.cfg
+# GDB
 
-gdb-multiarch ./firmware.elf
+.gdbinit file automatically loads firmware so you don't have to stop openocd
 
-target extended-remote localhost:3333
+gdb-multiarch firmware.elf
+
+list source code around current execution line: l
+
+# Serial monitor
 
 cu -l /dev/ttyACM0 -s 115200
 
