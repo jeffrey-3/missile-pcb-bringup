@@ -55,19 +55,14 @@ void gpio_set_af(uint16_t pin, uint8_t af_num) {
 	struct gpio *gpio = GPIO(PINBANK(pin)); // GPIO bank
 	int n = PINNO(pin); // Pin number
 	gpio->AFR[n >> 3] &= ~(15UL << ((n & 7) * 4));
-	gpio->AFR[n >> 3] |= ((uint32_t) af_num) << ((n & 7) * 4);
+        gpio->AFR[n >> 3] |= ((uint32_t) af_num) << ((n & 7) * 4);
 }
 
-void uart_init(struct uart *uart, uint8_t af, uint16_t rx,
-        uint16_t tx, unsigned long baud) {
+void uart_init(struct uart *uart, unsigned long baud) {
 	if (uart == UART1) {
 		RCC->APBENR2 |= BIT(14);
 	}
 
-	gpio_set_mode(tx, GPIO_MODE_AF);
-	gpio_set_af(tx, af);
-	gpio_set_mode(rx, GPIO_MODE_AF);
-	gpio_set_af(rx, af);
 	uart->CR1 = 0; // Disable this UART
 	uart->BRR = FREQ / baud; // FREQ is a UART bus frequency
 	uart->CR1 |= BIT(0) | BIT(2) | BIT(3); // Set UE, RE, TE
@@ -92,11 +87,52 @@ uint8_t uart_read_byte(struct uart *uart) {
         return (uint8_t) (uart->RDR & 255);
 }
 
-void spi_init() {
+void spi_init(struct spi *spi) {
+      if (spi == SPI1) {
+              RCC->APBENR2 |= BIT(12);
+      }
 
+      spi->CR1 |= BIT(2); // Set as master
+      spi->CR1 |= BIT(9); // Enable SSM to toggle CS manually
+      spi->CR2 |= BIT(12); // Trigger RXNE at 8-bit FIFO
+      spi->CR1 |= BIT(6); // SPI peripheral enable
 }
 
-void spi_write(uint16_t cs) {
+void spi_write(struct spi *spi, uint8_t *data, size_t len, uint16_t cs) {
         gpio_write(cs, false);
+        
+        while (len-- > 0) {
+                // Wait until TXE bit is set
+                while (!(spi->SR & BIT(1))) spin(1);
+
+                *((volatile uint8_t*) &(spi->DR)) = *data++;
+
+                // Finished transmit when BSY not set
+                while ((spi->SR & BIT(7))) spin(1);
+        }
+
+        // Check RXNE to discard receive buffer
+        while ((spi->SR & BIT(0))) {
+                (void) spi->DR;
+        }
+
+        gpio_write(cs, true);
+}
+
+void spi_read(struct spi *spi, uint8_t *data, size_t len, uint16_t cs) {
+        gpio_write(cs, false);
+
+        while (len-- > 0) {
+                // Wait until TXE bit is set
+                while (!(spi->SR & BIT(1))) spin(1); 
+                
+                spi->DR = 0x00; // Send a dummy byte to generate the clock
+
+                // Check RXNE
+                while (!(spi->SR & BIT(0))) spin(1);
+        
+                *data++ = *((volatile uint8_t*) &(spi->DR));
+        }
+
         gpio_write(cs, true);
 }

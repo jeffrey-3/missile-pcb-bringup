@@ -48,13 +48,7 @@ struct uart {
 };
 #define UART1 ((struct uart *) 0x40013800)
 
-void uart_init(struct uart *uart,
-               uint8_t af,
-               uint16_t rx,
-               uint16_t tx,
-               unsigned long baud);
-
-
+void uart_init(struct uart *uart, unsigned long baud);
 void uart_write_byte(struct uart *uart, uint8_t byte);
 void uart_write_buf(struct uart *uart, char *buf, size_t len);
 int uart_read_ready(struct uart *uart);
@@ -66,7 +60,8 @@ struct spi {
 };
 #define SPI1 ((struct spi *) 0x40013000)
 
-void spi_init();
-void spi_write(uint16_t cs);
+void spi_init(struct spi *spi);
+void spi_write(struct spi *spi, uint8_t *data, size_t len, uint16_t cs);
+void spi_read(struct spi *spi, uint8_t *data, size_t len, uint16_t cs);
 
 #endif /* HAL_H */
