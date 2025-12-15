@@ -63,6 +63,6 @@ struct spi {
 void spi_init(struct spi *spi);
 void spi_write(struct spi *spi, uint8_t *data, size_t len);
 void spi_read(struct spi *spi, uint8_t *data, size_t len);
-void spi_tranfer(struct spi *spi);
+uint8_t spi_transfer(struct spi *spi, uint8_t tx_data);
 
 #endif /* HAL_H */

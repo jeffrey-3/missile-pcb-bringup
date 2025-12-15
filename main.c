@@ -73,8 +73,9 @@ void test_imu() {
             on = !on;
 
             gpio_write(cs, false);
-            spi_write(SPI1, &reg_address, 1);
-            spi_read(SPI1, &data, 1);
+            spi_transfer(SPI1, reg_address);
+            // spi_write(SPI1, &reg_address, 1);
+            // spi_read(SPI1, &data, 1);
             gpio_write(cs, true);
 
             uart_write_buf(UART1, (char *)&data, 1);

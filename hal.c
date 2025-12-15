@@ -111,11 +111,6 @@ void spi_write(struct spi *spi, uint8_t *data, size_t len) {
         // Finished transmit when BSY not set
         while ((spi->SR & BIT(7))) spin(1);
     }
-
-    // Check RXNE to discard receive buffer
-    while ((spi->SR & BIT(0))) {
-        (void) spi->DR;
-    }
 }
 
 void spi_read(struct spi *spi, uint8_t *data, size_t len) {
@@ -130,4 +125,20 @@ void spi_read(struct spi *spi, uint8_t *data, size_t len) {
 
         *data++ = *((volatile uint8_t*) &(spi->DR));
     }
+}
+
+uint8_t spi_transfer(struct spi *spi, uint8_t tx_data) {
+    uint8_t rx_data = 0;
+
+    spi->DR = (uint16_t)(tx_data << 8);
+
+    // Finished transmit when BSY not set
+    while ((spi->SR & BIT(7))) spin(1);
+
+    // Check RXNE if data is received
+    while (!(spi->SR & BIT(0))) spin(1);
+
+    rx_data = (uint8_t)spi->DR;
+
+    return rx_data;
 }
