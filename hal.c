@@ -93,7 +93,8 @@ void spi_init(struct spi *spi) {
     }
 
     spi->CR1 |= BIT(2); // Set as master
-    spi->CR1 |= BIT(9); // Enable SSM to toggle CS manually
+    spi->CR1 |= BIT(9); // Enable SSM to set NSS input manually
+    spi->CR1 |= BIT(8); // Keep NSS input high so STM receives data
     spi->CR1 |= BIT(1); // Set CPOL to high when idle
     spi->CR1 |= BIT(0); // Set CPHA to 1
     spi->CR1 |= BIT(5); // Set clock speed to CPU_FREQ / 32

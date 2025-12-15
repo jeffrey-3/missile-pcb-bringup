@@ -61,9 +61,6 @@ void test_imu() {
 
     spi_init(SPI1);
 
-    uint8_t data = 0; // WHO_AM_I should be 0xE9
-    uint8_t reg_address = 0x72 | 0x80;
-
     uint32_t timer = 0;
     uint32_t period = 1000;
     for (;;) {
@@ -73,7 +70,7 @@ void test_imu() {
             on = !on;
 
             gpio_write(cs, false);
-            spi_transfer(SPI1, reg_address);
+            uint8_t data = spi_transfer(SPI1, (0x72 | 0x80));
             // spi_write(SPI1, &reg_address, 1);
             // spi_read(SPI1, &data, 1);
             gpio_write(cs, true);
