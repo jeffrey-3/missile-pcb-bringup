@@ -102,44 +102,14 @@ void spi_init(struct spi *spi) {
     spi->CR1 |= BIT(6); // SPI peripheral enable
 }
 
-void spi_write(struct spi *spi, uint8_t *data, size_t len) {
-    while (len-- > 0) {
-        // Wait until TXE bit is set
-        while (!(spi->SR & BIT(1))) spin(1);
-
-        *((volatile uint8_t*) &(spi->DR)) = *data++;
-
-        // Finished transmit when BSY not set
-        while ((spi->SR & BIT(7))) spin(1);
-    }
-}
-
-void spi_read(struct spi *spi, uint8_t *data, size_t len) {
-    while (len-- > 0) {
-        // Wait until TXE bit is set
-        while (!(spi->SR & BIT(1))) spin(1);
-
-        spi->DR = 0x00; // Send a dummy byte to generate the clock
-
-        // Check RXNE
-        while (!(spi->SR & BIT(0))) spin(1);
-
-        *data++ = *((volatile uint8_t*) &(spi->DR));
-    }
-}
-
 uint8_t spi_transfer(struct spi *spi, uint8_t tx_data) {
-    uint8_t rx_data = 0;
+    // Wait until TXE is set
+    while (!(spi->SR & BIT(1))) spin(1);
+    
+    *(volatile uint8_t *)&spi->DR = tx_data;
 
-    spi->DR = (uint16_t)(tx_data << 8);
-
-    // Finished transmit when BSY not set
-    while ((spi->SR & BIT(7))) spin(1);
-
-    // Check RXNE if data is received
+    // Wait until RXNE is set
     while (!(spi->SR & BIT(0))) spin(1);
-
-    rx_data = (uint8_t)spi->DR;
-
-    return rx_data;
+    
+    return *(volatile uint8_t *)&spi->DR;
 }

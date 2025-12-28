@@ -70,10 +70,8 @@ void test_imu() {
             on = !on;
 
             gpio_write(cs, false);
-            uint8_t data = spi_transfer(SPI1, (0x72 | 0x80)); // Address
-            // uint8_t data = spi_transfer(SPI1, 0x00); // Dummy byte
-            // spi_write(SPI1, &reg_address, 1);
-            // spi_read(SPI1, &data, 1);
+            spi_transfer(SPI1, (0x72 | 0x80));
+            uint8_t data = spi_transfer(SPI1, 0x00);
             gpio_write(cs, true);
 
             uart_write_buf(UART1, (char *)&data, 1);
