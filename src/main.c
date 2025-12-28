@@ -169,7 +169,11 @@ int main(void) {
 
     // test_uart();
     // test_spi();
-    test_imu();
+    // test_imu();
+
+    for (;;) {
+
+    }
 
     return 0;
 }
