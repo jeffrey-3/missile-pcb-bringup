@@ -1,5 +1,17 @@
 # Missile Firmware
 
+## Installing Toolchain
+
+## Build
+
+1. Clone the repository
+2. Set the working directory to the repository root
+3. Build the firmware:
+
+```
+make build
+```
+
 ## Flash
 
 ```
