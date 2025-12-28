@@ -16,6 +16,12 @@ ctrl+c to stop
 
 quit to exit gdb
 
+p SPI1 or p SPI1->CR1 to see registers or x/xw &SPI1->CR1 for hex
+
+p variable_name to print value of variable
+
+i b or info breakpoints to list all breakpoints
+
 # Serial monitor
 
 cu -l /dev/ttyACM0 -s 115200
@@ -23,6 +29,10 @@ cu -l /dev/ttyACM0 -s 115200
 enter ~ . to exit
 
 # Vim
+
+Type same thing on multiple lines Ctrl+v, shif+i, type what you want, then esc twice
+
+:E file tree explorer
 
 :vsplit filename
 
@@ -59,3 +69,5 @@ Copy multiple lines to clipboard: go to visual, select lines, "+y
 :set list and :set nolist to view whitespace
 
 :retab to fix tabs
+
+Search: press / and type what you want to search

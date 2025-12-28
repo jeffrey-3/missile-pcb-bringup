@@ -2,3 +2,5 @@
 *.elf
 *.bin
 *.map
+
+tags

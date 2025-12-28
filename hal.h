@@ -14,10 +14,10 @@
 void _systick_handler(void);
 
 struct rcc {
-    volatile uint32_t CR, ICSCR, CFGR, PLLCFGR, RESERVED, CRRCR, CIER,
-        CIFR, CICR, IOPRSTR, AHBRSTR, APBRSTR1, APBRSTR2, IOPENR,
-        AHBRNR, APBENR1, APBENR2, IOPSMENR, AHBSMENR, APBSMENR1,
-        APBSMENR2, CCIPR, CCIPR2, BDCR, CSR;
+    volatile uint32_t CR, ICSCR, CFGR, PLLCFGR, RESERVED, CRRCR, CIER, CIFR,
+        CICR, IOPRSTR, AHBRSTR, APBRSTR1, APBRSTR2, IOPENR, AHBRNR, APBENR1,
+        APBENR2, IOPSMENR, AHBSMENR, APBSMENR1, APBSMENR2, CCIPR, CCIPR2, BDCR, 
+        CSR;
 };
 #define RCC ((struct rcc *) 0x40021000)
 
@@ -43,8 +43,8 @@ void gpio_write(uint16_t pin, bool val);
 void gpio_set_af(uint16_t pin, uint8_t af_num);
 
 struct uart {
-    volatile uint32_t CR1, CR2, CR3, BRR, GTPR, RTOR, RQR, ISR, ICR, RDR,
-        TDR, PRESC;
+    volatile uint32_t CR1, CR2, CR3, BRR, GTPR, RTOR, RQR, ISR, ICR, RDR, TDR,
+        PRESC;
 };
 #define UART1 ((struct uart *) 0x40013800)
 
@@ -55,8 +55,7 @@ int uart_read_ready(struct uart *uart);
 uint8_t uart_read_byte(struct uart *uart);
 
 struct spi {
-    volatile uint32_t CR1, CR2, SR, DR, CRCPR, RXCRCR, TXCRCR, I2SCFGR,
-        I2SPR;
+    volatile uint32_t CR1, CR2, SR, DR, CRCPR, RXCRCR, TXCRCR, I2SCFGR, I2SPR;
 };
 #define SPI1 ((struct spi *) 0x40013000)
 
