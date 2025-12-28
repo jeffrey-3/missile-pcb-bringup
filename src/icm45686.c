@@ -7,12 +7,12 @@ void icm45686_init(icm45686_t  *device) {
     uint8_t tx_buf[2] = {ICM45686_PWR_MGMT, 0x0F};
     device->spi_transfer(tx_buf, rx_buf, 2);
 
-    // Set gyroscope to 200Hz data rate and 4000dps range (0x08)
+    // Set gyroscope to 200Hz data rate and 4000dps range
     tx_buf[0] = ICM45686_GYRO_CONFIG0;
     tx_buf[1] = 0x08;
     device->spi_transfer(tx_buf, rx_buf, 2);
 
-    // Set accelerometer to 200Hz data rate and 32g range (0x08)
+    // Set accelerometer to 200Hz data rate and 32g range
     tx_buf[0] = ICM45686_ACCEL_CONFIG0;
     tx_buf[1] = 0x08;
     device->spi_transfer(tx_buf, rx_buf, 2);

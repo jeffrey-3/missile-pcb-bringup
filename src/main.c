@@ -157,8 +157,7 @@ void test_imu() {
             snprintf(uart_buf, sizeof(uart_buf),
                 "%d %ld %ld %ld %ld %ld %ld\r\n", id, (int32_t)(accel[0] * 100),
                 (int32_t)(accel[1] * 100), (int32_t)(accel[2] * 100),
-                (int32_t)(gyro[0]), (int32_t)(gyro[1]),
-                (int32_t)(gyro[2]));
+                (int32_t)gyro[0], (int32_t)gyro[1], (int32_t)gyro[2]);
             uart_write_buf(UART1, uart_buf, strlen(uart_buf));
         }
     }
