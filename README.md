@@ -8,13 +8,13 @@ make flash
 
 ## Flash and Debug
 
-In a seperate terminal, run:
+1. In a seperate terminal, connect the STLink and start the OpenOCD server:
 
 ```
 make openocd
 ```
 
-Then in the original terminal, run:
+2. In the original terminal, start GDB:
 
 ```
 gdb-multiarch build/firmware.elf
