@@ -83,11 +83,16 @@ void test_spi() {
     }
 }
 
+void test_imu() {
+
+}
+
 int main(void) {
     systick_init(FREQ / 1000); // Tick every 1ms
 
     // test_uart();
-    test_spi();
+    // test_spi();
+    test_imu();
 
     return 0;
 }
