@@ -8,12 +8,13 @@ To proceed, the following tools are required:
 - GNU make, http://www.gnu.org/software/make/ - for build automation
 - ST link, https://github.com/stlink-org/stlink - for flashing
 - Git, https://git-scm.com/ - for downloading source code and version control
+- GDB Multiarch, https://www.sourceware.org/gdb/ - for debugging ARM Cortex-M
 
 ### Setup instructions for Linux (Debian)
 
 ```sh
 sudo apt -y update
-sudo apt -y install gcc-arm-none-eabi make stlink-tools git
+sudo apt -y install gcc-arm-none-eabi make stlink-tools git gdb-multiarch
 ```
 
 ## Build
