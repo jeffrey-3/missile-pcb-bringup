@@ -135,16 +135,30 @@ void test_imu() {
 
     uint8_t id = icm45686_read_id(&imu);
 
+    icm45686_init(&imu);
+
+    float accel[3];
+    float gyro[3];
     uint32_t timer = 0;
-    uint32_t period = 1000;
+    uint32_t period = 100;
     for (;;) {
         if (timer_expired(&timer, period)) {
+            // Toggle LED
             static bool on;
             gpio_write(led, on);
             on = !on;
 
-            char uart_buf[32];
-            snprintf(uart_buf, sizeof(uart_buf), "WHO_AM_I: %d\r\n", id);
+            // Read IMU
+            icm45686_read_accel(&imu, accel);
+            icm45686_read_gyro(&imu, gyro);
+
+            // UART
+            char uart_buf[100];
+            snprintf(uart_buf, sizeof(uart_buf),
+                "%d %ld %ld %ld %ld %ld %ld\r\n", id, (int32_t)(accel[0] * 100),
+                (int32_t)(accel[1] * 100), (int32_t)(accel[2] * 100),
+                (int32_t)(gyro[0]), (int32_t)(gyro[1]),
+                (int32_t)(gyro[2]));
             uart_write_buf(UART1, uart_buf, strlen(uart_buf));
         }
     }
