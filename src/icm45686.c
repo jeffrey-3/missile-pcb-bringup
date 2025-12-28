@@ -1,10 +1,12 @@
 #include "icm45686.h"
 
 void icm45686_init(icm45686_t  *device) {
+    uint8_t tx_buf[2];
     uint8_t rx_buf[2];
-    
+
     // Enable gyroscope and accelerometer in low noise mode
-    uint8_t tx_buf[2] = {ICM45686_PWR_MGMT, 0x0F};
+    tx_buf[0] = ICM45686_PWR_MGMT;
+    tx_buf[1] = 0x0F;
     device->spi_transfer(tx_buf, rx_buf, 2);
 
     // Set gyroscope to 200Hz data rate and 4000dps range

@@ -18,7 +18,7 @@ void _systick_handler(void);
 struct rcc {
     volatile uint32_t CR, ICSCR, CFGR, PLLCFGR, RESERVED, CRRCR, CIER, CIFR,
         CICR, IOPRSTR, AHBRSTR, APBRSTR1, APBRSTR2, IOPENR, AHBRNR, APBENR1,
-        APBENR2, IOPSMENR, AHBSMENR, APBSMENR1, APBSMENR2, CCIPR, CCIPR2, BDCR, 
+        APBENR2, IOPSMENR, AHBSMENR, APBSMENR1, APBSMENR2, CCIPR, CCIPR2, BDCR,
         CSR;
 };
 #define RCC ((struct rcc *) 0x40021000)
@@ -63,9 +63,7 @@ struct spi {
 
 void spi_init(struct spi *spi);
 uint8_t spi_transfer(struct spi *spi, uint8_t tx_data);
-void spi_transfer_buf(struct spi *spi,
-                      const uint8_t *tx_buf,
-                      uint8_t *rx_buf,
-                      size_t len);
+void spi_transfer_buf(struct spi *spi, const uint8_t *tx_buf, uint8_t *rx_buf,
+    size_t len);
 
 #endif /* HAL_H */

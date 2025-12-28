@@ -105,19 +105,17 @@ void spi_init(struct spi *spi) {
 uint8_t spi_transfer(struct spi *spi, uint8_t tx_data) {
     // Wait until TXE is set
     while (!(spi->SR & BIT(1))) spin(1);
-    
+
     *(volatile uint8_t *)&spi->DR = tx_data;
 
     // Wait until RXNE is set
     while (!(spi->SR & BIT(0))) spin(1);
-    
+
     return *(volatile uint8_t *)&spi->DR;
 }
 
-void spi_transfer_buf(struct spi *spi,
-                      const uint8_t *tx_buf,
-                      uint8_t *rx_buf,
-                      size_t len) {
+void spi_transfer_buf(struct spi *spi, const uint8_t *tx_buf, uint8_t *rx_buf,
+    size_t len) {
     for (size_t i = 0; i < len; i++) {
         rx_buf[i] = spi_transfer(spi, tx_buf[i]);
     }

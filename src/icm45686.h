@@ -11,9 +11,8 @@
 #define ICM45686_ACCEL_CONFIG0 0x1B
 #define ICM45686_GYRO_CONFIG0 0x1C
 
-typedef void (*icm45686_spi_transfer_t)(const uint8_t *tx_buf,
-                                        uint8_t *rx_buf,
-                                        size_t len);
+typedef void (*icm45686_spi_transfer_t)(const uint8_t *tx_buf, uint8_t *rx_buf,
+    size_t len);
 
 typedef struct {
     icm45686_spi_transfer_t spi_transfer;
