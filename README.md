@@ -12,6 +12,8 @@
 make build
 ```
 
+4. The firmware will be in the `build` directory
+
 ## Flash
 
 ```
