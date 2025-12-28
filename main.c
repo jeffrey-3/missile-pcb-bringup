@@ -26,7 +26,7 @@ void test_uart() {
     }
 }
 
-void test_imu() {
+void test_spi() {
     // UART
     uint16_t tx = PIN('B', 6);
     gpio_set_mode(tx, GPIO_MODE_AF);
@@ -69,12 +69,16 @@ void test_imu() {
             gpio_write(led, on);
             on = !on;
 
+            uint8_t tx_buf[2] = {0x72 | 0x80, 0x00};
+            uint8_t rx_buf[2];
+
             gpio_write(cs, false);
-            spi_transfer(SPI1, (0x72 | 0x80));
-            uint8_t data = spi_transfer(SPI1, 0x00);
+            spi_transfer_buf(SPI1, tx_buf, rx_buf, 2);
             gpio_write(cs, true);
 
-            uart_write_buf(UART1, (char *)&data, 1);
+            char uart_buf[32];
+            snprintf(uart_buf, sizeof(uart_buf), "WHO_AM_I: %d\r\n", rx_buf[1]);
+            uart_write_buf(UART1, uart_buf, strlen(uart_buf));
         }
     }
 }
@@ -83,7 +87,7 @@ int main(void) {
     systick_init(FREQ / 1000); // Tick every 1ms
 
     // test_uart();
-    test_imu();
+    test_spi();
 
     return 0;
 }

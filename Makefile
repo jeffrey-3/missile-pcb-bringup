@@ -4,7 +4,7 @@ CFLAGS  ?=  -W -Wall -Wextra -Werror -Wundef -Wshadow -Wdouble-promotion \
             -mcpu=cortex-m0plus -mthumb $(EXTRA_CFLAGS)
 LDFLAGS ?= -Tlink.ld -nostartfiles -nostdlib --specs nano.specs \
            -lc -lgcc -Wl,--gc-sections -Wl,-Map=$@.map
-SOURCES = main.c startup.c hal.c imu.c
+SOURCES = main.c startup.c syscalls.c hal.c imu.c
 
 build: firmware.elf
 

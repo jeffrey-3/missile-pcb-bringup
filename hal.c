@@ -113,3 +113,12 @@ uint8_t spi_transfer(struct spi *spi, uint8_t tx_data) {
     
     return *(volatile uint8_t *)&spi->DR;
 }
+
+void spi_transfer_buf(struct spi *spi,
+                      const uint8_t *tx_buf,
+                      uint8_t *rx_buf,
+                      size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        rx_buf[i] = spi_transfer(spi, tx_buf[i]);
+    }
+}
