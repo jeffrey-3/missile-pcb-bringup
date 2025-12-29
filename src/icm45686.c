@@ -5,7 +5,7 @@ void icm45686_init(icm45686_t  *device) {
     uint8_t rx_buf[2];
 
     // Enable gyroscope and accelerometer in low noise mode
-    tx_buf[0] = ICM45686_PWR_MGMT;
+    tx_buf[0] = ICM45686_PWR_MGMT0;
     tx_buf[1] = 0x0F;
     device->spi_transfer(tx_buf, rx_buf, 2);
 
@@ -28,8 +28,8 @@ uint8_t icm45686_read_id(icm45686_t *device) {
 }
 
 void icm45686_read_accel(icm45686_t *device, float *data) {
-    uint8_t tx_buf[7] = {ICM45686_ACCEL_DATA | 0x80, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00};
+    uint8_t tx_buf[7] = {ICM45686_ACCEL_DATA_X1_UI | 0x80, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00};
     uint8_t rx_buf[7];
     device->spi_transfer(tx_buf, rx_buf, 7);
 
@@ -44,8 +44,8 @@ void icm45686_read_accel(icm45686_t *device, float *data) {
 }
 
 void icm45686_read_gyro(icm45686_t *device, float *data) {
-    uint8_t tx_buf[7] = {ICM45686_GYRO_DATA | 0x80, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00};
+    uint8_t tx_buf[7] = {ICM45686_GYRO_DATA_X1_UI | 0x80, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00};
     uint8_t rx_buf[7];
     device->spi_transfer(tx_buf, rx_buf, 7);
 
