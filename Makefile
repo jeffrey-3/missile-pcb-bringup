@@ -9,7 +9,8 @@ SOURCES = src/main.c \
           src/syscalls.c \
           src/hal.c \
           src/icm45686.c \
-          src/quaternion.c
+          src/quaternion.c \
+          src/ins.c
 
 build: build/firmware.elf
 
