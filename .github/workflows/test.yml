@@ -6,5 +6,5 @@ jobs:
         steps:
         - uses: actions/checkout@v3
         - run: sudo apt-get update
-        - run: sudo apt -y install gcc-arm-none-eabi make stlink-tools
+        - run: sudo apt -y install gcc-arm-none-eabi make
         - run: make
