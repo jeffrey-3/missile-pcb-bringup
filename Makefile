@@ -11,6 +11,7 @@ SOURCES = src/main.c \
           src/board.c \
           src/icm45686.c \
           src/quaternion.c \
+          src/math.c \
           src/ins.c
 
 build: build/firmware.elf
