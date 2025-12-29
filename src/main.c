@@ -4,13 +4,6 @@
 #include "quaternion.h"
 #include "ins.h"
 
-void icm45686_spi_transfer(const uint8_t *tx_buf, uint8_t *rx_buf,
-    size_t len) {
-    gpio_write(board_pins.cs, false);
-    spi_transfer_buf(SPI1, tx_buf, rx_buf, len);
-    gpio_write(board_pins.cs, true);
-}
-
 int main(void) {
     systick_init();
 
@@ -20,7 +13,7 @@ int main(void) {
     ins_init(&ins);
 
     icm45686_t imu = {
-        .spi_transfer = icm45686_spi_transfer
+        .spi_transfer = board_icm45686_spi_transfer
     };
     icm45686_init(&imu);
 
@@ -65,7 +58,7 @@ int main(void) {
 
             char uart_buf[64];
             snprintf(uart_buf, sizeof(uart_buf),
-                "%.0f %.0f %.0f %.1f %.1f %.1f\r\n",
+                "%.1f %.1f %.1f %.1f %.1f %.1f\r\n",
                 (double)roll, (double)pitch, (double)yaw,
                 (double)ins.vel.x, (double)ins.vel.y, (double)ins.vel.z);
             uart_write_buf(UART1, uart_buf, strlen(uart_buf));

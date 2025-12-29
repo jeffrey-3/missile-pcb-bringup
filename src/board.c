@@ -45,3 +45,10 @@ void board_setup_spi(void) {
 
     spi_init(SPI1);
 }
+
+void board_icm45686_spi_transfer(const uint8_t *tx_buf, uint8_t *rx_buf,
+    size_t len) {
+    gpio_write(board_pins.cs, false);
+    spi_transfer_buf(SPI1, tx_buf, rx_buf, len);
+    gpio_write(board_pins.cs, true);
+}
