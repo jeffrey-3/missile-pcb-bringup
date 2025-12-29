@@ -14,22 +14,28 @@ void systick_init(uint32_t ticks) {
     RCC->APBENR2 |= BIT(0); // Enable SYSCFG
 }
 
-/**
- * @brief Check if timer expired
- *
- * @param t Expiration time
- * @param prd Period
- *
- * @return true Expired
- * @return false Not expired
- */
 bool timer_expired(uint32_t *t, uint32_t prd) {
-    if (s_ticks + prd < *t) *t = 0; // Time wrapped? Reset timer
-    if (*t == 0) *t = s_ticks + prd; // First poll? Set expiration
-    if (*t > s_ticks) return false; // Not expired yet, return
+    // Reset timer if time wrapped
+    if (s_ticks + prd < *t) {
+        *t = 0;
+    }
 
-    // Next expiration time
-    *t = (s_ticks - *t) > prd ? s_ticks + prd : *t + prd;
+    // Check if first poll and set expiration
+    if (*t == 0) {
+        *t = s_ticks + prd;
+    }
+    
+    // If not expired yet, return false
+    if (*t > s_ticks) {
+        return false;
+    }
+
+    // Set next expiration time
+    if (s_ticks - *t > prd) {
+        *t = s_ticks + prd;
+    } else {
+        *t += prd;
+    }
 
     return true; // Expired, return true
 }
