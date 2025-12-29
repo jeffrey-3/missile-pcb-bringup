@@ -15,7 +15,7 @@ void board_init(void) {
     board_setup_uart();
     board_setup_spi();
 }
-asdk
+
 void board_setup_led(void) {
     gpio_set_mode(board_pins.led, GPIO_MODE_OUTPUT);
 }
