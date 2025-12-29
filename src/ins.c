@@ -14,8 +14,8 @@ void ins_init(ins_t *ins) {
 void ins_update(ins_t *ins, float gx, float gy, float gz, float ax, float ay,
     float az, float dt) {
     if (ins->first_update) {
-        float roll = atan2f(ay, az);
-        float pitch = atan2f(-ax, sqrtf(ay*ay + az*az));
+        float roll = atan2f(-ay, -az);
+        float pitch = atan2f(ax, sqrtf(ay*ay + az*az));
         ins->q = quat_from_euler(roll, pitch, 0.0f);
         ins->first_update = false;
     }
@@ -31,7 +31,7 @@ void ins_update(ins_t *ins, float gx, float gy, float gz, float ax, float ay,
 
     vec3_t acc_body = {ax * 9.81f, ay * 9.81f, az * 9.81f};
     ins->acc_world = quat_rotate_vector(ins->q, acc_body);
-    ins->acc_world.z -= 9.81f;
+    ins->acc_world.z += 9.81f;
 
     ins->vel.x += ins->acc_world.x * dt;
     ins->vel.y += ins->acc_world.y * dt;
