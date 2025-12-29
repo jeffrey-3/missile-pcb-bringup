@@ -8,6 +8,7 @@ SOURCES = src/main.c \
           src/startup.c \
           src/syscalls.c \
           src/hal.c \
+          src/board.c \
           src/icm45686.c \
           src/quaternion.c \
           src/ins.c

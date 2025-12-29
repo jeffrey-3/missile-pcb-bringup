@@ -1,61 +1,19 @@
-#include "hal.h"
+#include "board.h"
 #include "icm45686.h"
 #include "quaternion.h"
 #include "ins.h"
 
-uint16_t led = PIN('B', 9);
-
-uint16_t tx = PIN('B', 6);
-uint16_t rx = PIN('B', 7);
-
-uint16_t cs = PIN('A', 1);
-uint16_t miso = PIN('A', 6);
-uint16_t mosi = PIN('A', 12);
-uint16_t sck = PIN('A', 5);
-
 static void icm45686_spi_transfer(const uint8_t *tx_buf, uint8_t *rx_buf,
     size_t len) {
-    gpio_write(cs, false);
+    gpio_write(board_pins.cs, false);
     spi_transfer_buf(SPI1, tx_buf, rx_buf, len);
-    gpio_write(cs, true);
-}
-
-void setup_led() {
-    gpio_set_mode(led, GPIO_MODE_OUTPUT);
-}
-
-void setup_uart() {
-    gpio_set_mode(tx, GPIO_MODE_AF);
-    gpio_set_af(tx, 0);
-
-    gpio_set_mode(rx, GPIO_MODE_AF);
-    gpio_set_af(rx, 0);
-
-    uart_init(UART1, 115200);
-}
-
-void setup_spi() {
-    gpio_set_mode(cs, GPIO_MODE_OUTPUT);
-    gpio_write(cs, true);
-
-    gpio_set_mode(miso, GPIO_MODE_AF);
-    gpio_set_af(miso, 0);
-
-    gpio_set_mode(mosi, GPIO_MODE_AF);
-    gpio_set_af(mosi, 0);
-
-    gpio_set_mode(sck, GPIO_MODE_AF);
-    gpio_set_af(sck, 0);
-
-    spi_init(SPI1);
+    gpio_write(board_pins.cs, true);
 }
 
 int main(void) {
     systick_init();
 
-    setup_led();
-    setup_uart();
-    setup_spi();
+    board_init();
 
     ins_t ins;
     ins_init(&ins);
@@ -77,7 +35,7 @@ int main(void) {
     for (;;) {
         if (timer_expired(&led_timer, 500)) {
             static bool on;
-            gpio_write(led, on);
+            gpio_write(board_pins.led, on);
             on = !on;
         }
 
