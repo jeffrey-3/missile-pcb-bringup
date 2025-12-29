@@ -1,43 +1,44 @@
 #include "hal.h"
 
-static volatile uint32_t s_ticks;
+static volatile uint32_t current_time = 0;
+static volatile uint32_t expiration = 0;
 
 void _systick_handler(void) {
-    s_ticks++;
+    current_time++;
 }
 
-void systick_init(uint32_t ticks) {
-    if ((ticks - 1) > 0xffffff) return; // Systick timer is 24 bit
-    SYSTICK->LOAD = ticks - 1;
+void systick_init() {
+    SYSTICK->LOAD = FREQ / 1000 - 1; // Tick every 1ms
     SYSTICK->VAL = 0;
     SYSTICK->CTRL = BIT(0) | BIT(1) | BIT(2); // Enable systick
     RCC->APBENR2 |= BIT(0); // Enable SYSCFG
 }
 
-bool timer_expired(uint32_t *t, uint32_t prd) {
-    // Reset timer if time wrapped
-    if (s_ticks + prd < *t) {
-        *t = 0;
+bool timer_expired(uint32_t period) {
+    // Reset expiration if time wrapped
+    if (current_time + period < expiration) {
+        expiration = 0;
     }
 
     // Check if first poll and set expiration
-    if (*t == 0) {
-        *t = s_ticks + prd;
+    if (expiration == 0) {
+        expiration = current_time + period;
     }
     
-    // If not expired yet, return false
-    if (*t > s_ticks) {
-        return false;
-    }
-
-    // Set next expiration time
-    if (s_ticks - *t > prd) {
-        *t = s_ticks + prd;
+    // Check if timer expired
+    if (expiration > current_time) {
+        return false; // Not expired, return false
     } else {
-        *t += prd;
+        // Set next expiration time
+        if (current_time - expiration > period) {
+            // If you missed a period, set expiration relative to now
+            expiration = current_time + period;
+        } else {
+            expiration += period;
+        }
+        return true; // Expired, return true
     }
 
-    return true; // Expired, return true
 }
 
 void spin(volatile uint32_t count) {

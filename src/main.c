@@ -25,10 +25,8 @@ void test_uart() {
     uint16_t led = PIN('B', 9);
     gpio_set_mode(led, GPIO_MODE_OUTPUT);
 
-    uint32_t timer = 0;
-    uint32_t period = 200; // 200ms
     for (;;) {
-        if (timer_expired(&timer, period)) {
+        if (timer_expired(200)) {
             static bool on;
             gpio_write(led, on);
             on = !on;
@@ -72,10 +70,8 @@ void test_spi() {
 
     spi_init(SPI1);
 
-    uint32_t timer = 0;
-    uint32_t period = 1000;
     for (;;) {
-        if (timer_expired(&timer, period)) {
+        if (timer_expired(1000)) {
             static bool on;
             gpio_write(led, on);
             on = !on;
@@ -140,10 +136,8 @@ void test_imu() {
 
     float accel[3];
     float gyro[3];
-    uint32_t timer = 0;
-    uint32_t period = 10;
     for (;;) {
-        if (timer_expired(&timer, period)) {
+        if (timer_expired(10)) {
             // Toggle LED
             static bool on;
             gpio_write(led, on);
@@ -204,10 +198,8 @@ void test_quat() {
     float accel[3];
     float gyro[3];
     quat_t q = quat_identity();
-    uint32_t timer = 0;
-    uint32_t period = 20;
     for (;;) {
-        if (timer_expired(&timer, period)) {
+        if (timer_expired(20)) {
             // Read IMU
             icm45686_read_accel(&imu, accel);
             icm45686_read_gyro(&imu, gyro);
@@ -234,7 +226,7 @@ void test_quat() {
 }
 
 int main(void) {
-    systick_init(FREQ / 1000); // Tick every 1ms
+    systick_init();
 
     // test_uart();
     // test_spi();

@@ -28,8 +28,8 @@ struct systick {
 };
 #define SYSTICK ((struct systick *) 0xe000e010)
 
-void systick_init(uint32_t ticks);
-bool timer_expired(uint32_t *t, uint32_t prd);
+void systick_init();
+bool timer_expired(uint32_t period);
 void spin(volatile uint32_t count);
 
 struct gpio {
