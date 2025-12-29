@@ -29,6 +29,7 @@ struct systick {
 #define SYSTICK ((struct systick *) 0xe000e010)
 
 void systick_init();
+uint32_t get_time();
 bool timer_expired(uint32_t period);
 void spin(volatile uint32_t count);
 

@@ -14,6 +14,10 @@ void systick_init() {
     RCC->APBENR2 |= BIT(0); // Enable SYSCFG
 }
 
+uint32_t get_time() {
+    return current_time;
+}
+
 bool timer_expired(uint32_t period) {
     // Reset expiration if time wrapped
     if (current_time + period < expiration) {
@@ -83,7 +87,9 @@ void uart_write_byte(struct uart *uart, uint8_t byte) {
 }
 
 void uart_write_buf(struct uart *uart, char *buf, size_t len) {
-    while (len-- > 0) uart_write_byte(uart, *(uint8_t *) buf++);
+    while (len-- > 0) {
+        uart_write_byte(uart, *(uint8_t *) buf++);
+    }
 }
 
 int uart_read_ready(struct uart *uart) {
