@@ -38,3 +38,22 @@ void quat_to_euler(quat_t q, float *roll, float *pitch, float *yaw) {
     *pitch = asinf(2*(q.w*q.y - q.z*q.x));
     *yaw   = atan2f(2*(q.w*q.z + q.x*q.y), 1 - 2*(q.y*q.y + q.z*q.z));
 }
+
+quat_t quat_from_euler(float roll, float pitch, float yaw) {
+    float cr = cosf(roll * 0.5f);
+    float sr = sinf(roll * 0.5f);
+    float cp = cosf(pitch * 0.5f);
+    float sp = sinf(pitch * 0.5f);
+    float cy = cosf(yaw * 0.5f);
+    float sy = sinf(yaw * 0.5f);
+
+    quat_t q;
+    q.w = cr*cp*cy + sr*sp*sy;
+    q.x = sr*cp*cy - cr*sp*sy;
+    q.y = cr*sp*cy + sr*cp*sy;
+    q.z = cr*cp*sy - sr*sp*cy;
+
+    quat_normalize(&q);
+
+    return q;
+}

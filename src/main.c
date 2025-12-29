@@ -58,7 +58,7 @@ int main(void) {
 
             char uart_buf[64];
             snprintf(uart_buf, sizeof(uart_buf),
-                "%.1f %.1f %.1f %.1f %.1f %.1f\r\n",
+                "%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\r\n",
                 (double)roll, (double)pitch, (double)yaw,
                 (double)ins.vel.x, (double)ins.vel.y, (double)ins.vel.z);
             uart_write_buf(UART1, uart_buf, strlen(uart_buf));

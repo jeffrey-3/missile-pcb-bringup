@@ -1,6 +1,8 @@
 #ifndef INS_H
 #define INS_H
 
+#include <stdbool.h>
+
 #include "quaternion.h"
 
 typedef struct {
@@ -8,6 +10,7 @@ typedef struct {
     vec3_t pos;
     vec3_t vel;
     vec3_t acc_world;
+    bool first_update;
 } ins_t;
 
 void ins_init(ins_t *ins);
