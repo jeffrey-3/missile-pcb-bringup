@@ -24,6 +24,15 @@ quat_t quat_mul(quat_t q1, quat_t q2) {
     return q;
 }
 
+vec3_t quat_rotate_vector(quat_t q, vec3_t v) {
+    quat_t q_conj = {q.w, -q.x, -q.y, -q.z};
+    quat_t v_quat = {0.0f, v.x, v.y, v.z};
+    quat_t temp = quat_mul(q, v_quat);
+    quat_t result = quat_mul(temp, q_conj);
+    vec3_t rotated = {result.x, result.y, result.z};
+    return rotated;
+}
+
 void quat_to_euler(quat_t q, float *roll, float *pitch, float *yaw) {
     *roll  = atan2f(2*(q.w*q.x + q.y*q.z), 1 - 2*(q.x*q.x + q.y*q.y));
     *pitch = asinf(2*(q.w*q.y - q.z*q.x));

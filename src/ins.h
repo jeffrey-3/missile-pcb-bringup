@@ -5,6 +5,9 @@
 
 typedef struct {
     quat_t q;
+    vec3_t pos;
+    vec3_t vel;
+    vec3_t acc_world;
 } ins_t;
 
 void ins_init(ins_t *ins);

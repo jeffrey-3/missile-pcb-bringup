@@ -31,6 +31,8 @@ int main(void) {
     float yaw;
     uint32_t led_timer = 0;
     uint32_t ins_timer = 0;
+    float i = 0;
+    float gyro_sum[3] = {0.0f, 0.0f, 0.0f};
 
     for (;;) {
         if (timer_expired(&led_timer, 500)) {
@@ -39,16 +41,21 @@ int main(void) {
             on = !on;
         }
 
-        if (timer_expired(&ins_timer, 20)) {
+        if (timer_expired(&ins_timer, 10)) {
             icm45686_read_accel(&imu, accel);
             icm45686_read_gyro(&imu, gyro);
 
-            gyro[0] *= DEG2RAD;
-            gyro[1] *= DEG2RAD;
-            gyro[2] *= DEG2RAD;
+            gyro[0] = gyro[0] * DEG2RAD - 0.00795f;
+            gyro[1] = gyro[1] * DEG2RAD + 0.00295f;
+            gyro[2] = gyro[2] * DEG2RAD - 0.00020f;
+
+            i += 1;
+            gyro_sum[0] += gyro[0];
+            gyro_sum[1] += gyro[1];
+            gyro_sum[2] += gyro[2];
 
             ins_update(&ins, gyro[0], gyro[1], gyro[2], accel[0], accel[1],
-                accel[2], 0.02f);
+                accel[2], 0.01f);
 
             quat_to_euler(ins.q, &roll, &pitch, &yaw);
 
@@ -56,9 +63,11 @@ int main(void) {
             pitch *= RAD2DEG;
             yaw *= RAD2DEG;
 
-            char uart_buf[32];
-            snprintf(uart_buf, sizeof(uart_buf), "%.1f %.1f %.1f\r\n",
-                (double)roll, (double)pitch, (double)yaw);
+            char uart_buf[64];
+            snprintf(uart_buf, sizeof(uart_buf),
+                "%.0f %.0f %.0f %.1f %.1f %.1f\r\n",
+                (double)roll, (double)pitch, (double)yaw,
+                (double)ins.vel.x, (double)ins.vel.y, (double)ins.vel.z);
             uart_write_buf(UART1, uart_buf, strlen(uart_buf));
         }
     }
