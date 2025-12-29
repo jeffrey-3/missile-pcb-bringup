@@ -56,8 +56,8 @@ int main(void) {
             yaw *= 180.0f / 3.14159f;
 
             char uart_buf[32];
-            snprintf(uart_buf, sizeof(uart_buf), "%ld %ld %ld\r\n",
-                (int32_t)roll, (int32_t)pitch, (int32_t)yaw);
+            snprintf(uart_buf, sizeof(uart_buf), "%.1f %.1f %.1f\r\n",
+                (double)roll, (double)pitch, (double)yaw);
             uart_write_buf(UART1, uart_buf, strlen(uart_buf));
         }
     }
