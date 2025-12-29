@@ -1,7 +1,6 @@
 #include "hal.h"
 
 static volatile uint32_t current_time = 0;
-static volatile uint32_t expiration = 0;
 
 void _systick_handler(void) {
     current_time++;
@@ -18,27 +17,27 @@ uint32_t get_time() {
     return current_time;
 }
 
-bool timer_expired(uint32_t period) {
+bool timer_expired(uint32_t *expiration, uint32_t period) {
     // Reset expiration if time wrapped
-    if (current_time + period < expiration) {
-        expiration = 0;
+    if (current_time + period < *expiration) {
+        *expiration = 0;
     }
 
     // Check if first poll and set expiration
-    if (expiration == 0) {
-        expiration = current_time + period;
+    if (*expiration == 0) {
+        *expiration = current_time + period;
     }
-    
+
     // Check if timer expired
-    if (expiration > current_time) {
+    if (*expiration > current_time) {
         return false; // Not expired, return false
     } else {
         // Set next expiration time
-        if (current_time - expiration > period) {
+        if (current_time - *expiration > period) {
             // If you missed a period, set expiration relative to now
-            expiration = current_time + period;
+            *expiration = current_time + period;
         } else {
-            expiration += period;
+            *expiration += period;
         }
         return true; // Expired, return true
     }

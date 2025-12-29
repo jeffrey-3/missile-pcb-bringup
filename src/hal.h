@@ -30,7 +30,7 @@ struct systick {
 
 void systick_init();
 uint32_t get_time();
-bool timer_expired(uint32_t period);
+bool timer_expired(uint32_t *expiration, uint32_t period);
 void spin(volatile uint32_t count);
 
 struct gpio {
