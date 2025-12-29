@@ -1,5 +1,6 @@
 #include "hal.h"
 #include "icm45686.h"
+#include "quaternion.h"
 
 static void icm45686_spi_transfer(const uint8_t *tx_buf, uint8_t *rx_buf,
     size_t len) {
@@ -140,7 +141,7 @@ void test_imu() {
     float accel[3];
     float gyro[3];
     uint32_t timer = 0;
-    uint32_t period = 100;
+    uint32_t period = 10;
     for (;;) {
         if (timer_expired(&timer, period)) {
             // Toggle LED
@@ -161,7 +162,75 @@ void test_imu() {
             uart_write_buf(UART1, uart_buf, strlen(uart_buf));
         }
     }
+}
 
+void test_quat() {
+    // UART
+    uint16_t tx = PIN('B', 6);
+    gpio_set_mode(tx, GPIO_MODE_AF);
+    gpio_set_af(tx, 0);
+
+    uint16_t rx = PIN('B', 7);
+    gpio_set_mode(rx, GPIO_MODE_AF);
+    gpio_set_af(rx, 0);
+
+    uart_init(UART1, 115200);
+
+    // SPI
+    uint16_t cs = PIN('A', 1);
+    gpio_set_mode(cs, GPIO_MODE_OUTPUT);
+    gpio_write(cs, true);
+
+    uint16_t miso = PIN('A', 6);
+    gpio_set_mode(miso, GPIO_MODE_AF);
+    gpio_set_af(miso, 0);
+
+    uint16_t mosi = PIN('A', 12);
+    gpio_set_mode(mosi, GPIO_MODE_AF);
+    gpio_set_af(mosi, 0);
+
+    uint16_t sck = PIN('A', 5);
+    gpio_set_mode(sck, GPIO_MODE_AF);
+    gpio_set_af(sck, 0);
+
+    spi_init(SPI1);
+
+    // IMU
+    icm45686_t imu = {
+        .spi_transfer = icm45686_spi_transfer
+    };
+    icm45686_init(&imu);
+
+    float accel[3];
+    float gyro[3];
+    quat_t q = quat_identity();
+    uint32_t timer = 0;
+    uint32_t period = 20;
+    for (;;) {
+        if (timer_expired(&timer, period)) {
+            // Read IMU
+            icm45686_read_accel(&imu, accel);
+            icm45686_read_gyro(&imu, gyro);
+
+            gyro[0] *= 3.14159f / 180.0f;
+            gyro[1] *= 3.14159f / 180.0f;
+            gyro[2] *= 3.14159f / 180.0f;
+
+            quat_update_gyro(&q, gyro[0], gyro[1], gyro[2], 0.02f);
+
+            float roll, pitch, yaw;
+            quat_to_euler(q, &roll, &pitch, &yaw);
+            roll *= 180.0f / 3.14159f;
+            pitch *= 180.0f / 3.14159f;
+            yaw *= 180.0f / 3.14159f;
+
+            // UART
+            char uart_buf[32];
+            snprintf(uart_buf, sizeof(uart_buf), "%ld %ld %ld\r\n",
+                (int32_t)roll, (int32_t)pitch, (int32_t)yaw);
+            uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+        }
+    }
 }
 
 int main(void) {
@@ -170,10 +239,7 @@ int main(void) {
     // test_uart();
     // test_spi();
     // test_imu();
-
-    for (;;) {
-
-    }
-
+    test_quat();
+    
     return 0;
 }

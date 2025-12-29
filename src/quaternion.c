@@ -23,3 +23,22 @@ quat_t quat_mul(quat_t q1, quat_t q2) {
     q.z = q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w;
     return q;
 }
+
+void quat_update_gyro(quat_t *q, float gx, float gy, float gz, float dt) {
+    float half_dt = 0.5f * dt;
+
+    quat_t dq;
+    dq.w = 1.0f;
+    dq.x = gx * half_dt;
+    dq.y = gy * half_dt;
+    dq.z = gz * half_dt;
+
+    *q = quat_mul(*q, dq);
+    quat_normalize(q);
+}
+
+void quat_to_euler(quat_t q, float *roll, float *pitch, float *yaw) {
+    *roll  = atan2f(2*(q.w*q.x + q.y*q.z), 1 - 2*(q.x*q.x + q.y*q.y));
+    *pitch = asinf(2*(q.w*q.y - q.z*q.x));
+    *yaw   = atan2f(2*(q.w*q.z + q.x*q.y), 1 - 2*(q.y*q.y + q.z*q.z));
+}
