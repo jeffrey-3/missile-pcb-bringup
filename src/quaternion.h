@@ -13,7 +13,6 @@ typedef struct {
 quat_t quat_identity();
 void quat_normalize(quat_t *q);
 quat_t quat_mul(quat_t q1, quat_t q2);
-void quat_update_gyro(quat_t *q, float gx, float gy, float gz, float dt);
 void quat_to_euler(quat_t q, float *roll, float *pitch, float *yaw);
 
 #endif // QUATERNION_H
