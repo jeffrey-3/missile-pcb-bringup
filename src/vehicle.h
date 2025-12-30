@@ -14,8 +14,6 @@ typedef struct {
     w25q128jv_t flash;
 } vehicle_t;
 
-extern vehicle_t vehicle;
-
 void vehicle_init();
 void vehicle_update();
 
