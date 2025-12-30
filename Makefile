@@ -13,7 +13,8 @@ SOURCES = src/main.c \
           src/w25q128jv.c \
           src/quaternion.c \
           src/math.c \
-          src/ins.c
+          src/ins.c \
+          src/logger.c
 
 build: build/firmware.elf
 
