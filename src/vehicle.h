@@ -17,5 +17,6 @@ typedef struct {
 extern vehicle_t vehicle;
 
 void vehicle_init();
+void vehicle_update();
 
 #endif // VEHICLE_H

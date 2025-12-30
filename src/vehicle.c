@@ -76,3 +76,7 @@ void vehicle_init() {
         }
     }
 }
+
+void vehicle_update() {
+    
+}
