@@ -13,6 +13,11 @@ void systick_init() {
     RCC->APBENR2 |= BIT(0); // Enable SYSCFG
 }
 
+void delay(uint32_t duration) {
+    uint32_t start = current_time;
+    while (current_time - start < duration) spin(1);
+}
+
 uint32_t get_time() {
     return current_time;
 }

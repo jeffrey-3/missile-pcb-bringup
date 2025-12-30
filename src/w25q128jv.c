@@ -38,3 +38,33 @@ void w25q128jv_read(w25q128jv_t *device, uint32_t start_page, uint8_t offset,
         data[i] = rx_buf[i + 4];
     }
 }
+
+void w25q128jv_write_enable(w25q128jv_t *device) {
+    uint8_t tx_buf[1] = {W25Q128JV_WRITE_ENABLE};
+    uint8_t rx_buf[1];
+    device->spi_transfer(tx_buf, rx_buf, 1);
+    device->delay_ms(5); // Write cycle delay
+}
+
+void w25q128jv_write_disable(w25q128jv_t *device) {
+    uint8_t tx_buf[1] = {W25Q128JV_WRITE_DISABLE};
+    uint8_t rx_buf[1];
+    device->spi_transfer(tx_buf, rx_buf, 1);
+    device->delay_ms(5); // Write cycle delay
+}
+
+void w25q128jv_erase_sector(w25q128jv_t *device, uint16_t sector) {
+    // Each sector has 16 pages of 256 bytes each
+    uint32_t mem_addr = sector * 16 * 256;
+   
+    w25q128jv_write_enable(device);
+
+    uint8_t tx_buf[4] = {W25Q128JV_SECTOR_ERASE, (mem_addr >> 16) & 0xFF,
+        (mem_addr >> 8) & 0xFF, mem_addr & 0xFF};
+    uint8_t rx_buf[4];
+    device->spi_transfer(tx_buf, rx_buf, 4);
+
+    device->delay_ms(450); // Delay for sector erase
+
+    w25q128jv_write_disable(device);
+}

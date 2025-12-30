@@ -19,14 +19,17 @@ int main(void) {
     icm45686_init(&imu);
 
     w25q128jv_t flash = {
-        .spi_transfer = board_w25q128jv_spi_transfer
+        .spi_transfer = board_w25q128jv_spi_transfer,
+        .delay_ms = delay
     };
 
     volatile uint8_t flash_id = w25q128jv_read_id(&flash);
     flash_id = flash_id;
 
-    uint8_t data[3];
-    w25q128jv_read(&flash, 0, 0, 3, data);
+    uint8_t data[10];
+    w25q128jv_read(&flash, 1, 85, 10, data);
+    w25q128jv_erase_sector(&flash, 0);
+    w25q128jv_read(&flash, 1, 85, 10, data);
 
     float accel[3];
     float gyro[3];
