@@ -56,15 +56,44 @@ void w25q128jv_write_disable(w25q128jv_t *device) {
 void w25q128jv_erase_sector(w25q128jv_t *device, uint16_t sector) {
     // Each sector has 16 pages of 256 bytes each
     uint32_t mem_addr = sector * 16 * 256;
-   
-    w25q128jv_write_enable(device);
-
     uint8_t tx_buf[4] = {W25Q128JV_SECTOR_ERASE, (mem_addr >> 16) & 0xFF,
         (mem_addr >> 8) & 0xFF, mem_addr & 0xFF};
     uint8_t rx_buf[4];
+   
+    w25q128jv_write_enable(device);
     device->spi_transfer(tx_buf, rx_buf, 4);
-
     device->delay_ms(450); // Delay for sector erase
-
     w25q128jv_write_disable(device);
+}
+
+/*
+ * @brief Write data to memory
+ *
+ * Must enable write and erase sector before writing.
+ *
+ * @param device The device handle
+ * @param page The page to write on
+ * @param offset The offset on the page
+ * @param size The size of data to write
+ * @param data The pointer to the array of data to write
+ */
+void w25q128jv_write_page(w25q128jv_t *device, uint32_t page, uint16_t offset,
+    uint32_t size, uint8_t *data) {
+    uint32_t mem_addr = page * 256 + offset;
+    
+    uint8_t tx_buf[size + 4];
+    uint8_t rx_buf[size + 4];
+    
+    tx_buf[0] = W25Q128JV_PAGE_PROGRAM;
+    tx_buf[1] = (mem_addr >> 16) & 0xFF;
+    tx_buf[2] = (mem_addr >> 8) & 0xFF;
+    tx_buf[3] = mem_addr & 0xFF;
+
+    for (uint16_t i = 0; i < size; i++) {
+        tx_buf[i + 4] = data[i];
+    }
+
+    device->spi_transfer(tx_buf, rx_buf, size + 4);
+    
+    device->delay_ms(5);
 }

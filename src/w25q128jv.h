@@ -9,6 +9,7 @@
 #define W25Q128JV_SECTOR_ERASE 0x20
 #define W25Q128JV_WRITE_ENABLE 0x06
 #define W25Q128JV_WRITE_DISABLE 0x04
+#define W25Q128JV_PAGE_PROGRAM 0x02
 
 typedef void (*w25q128jv_spi_transfer_t)(const uint8_t *tx_buf, uint8_t *rx_buf,
     size_t len);
@@ -25,5 +26,7 @@ void w25q128jv_read(w25q128jv_t *device, uint32_t start_page, uint8_t offset,
 void w25q128jv_write_enable(w25q128jv_t *device);
 void w25q128jv_write_disable(w25q128jv_t *device);
 void w25q128jv_erase_sector(w25q128jv_t *device, uint16_t sector);
+void w25q128jv_write_page(w25q128jv_t *device, uint32_t page, uint16_t offset,
+    uint32_t size, uint8_t *data);
 
 #endif // W25Q128JV_H

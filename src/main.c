@@ -26,10 +26,15 @@ int main(void) {
     volatile uint8_t flash_id = w25q128jv_read_id(&flash);
     flash_id = flash_id;
 
-    uint8_t data[10];
-    w25q128jv_read(&flash, 1, 85, 10, data);
+    uint8_t read_data[10];
+    uint8_t write_data[3] = {1, 2, 3};
+    w25q128jv_read(&flash, 1, 85, 10, read_data);
     w25q128jv_erase_sector(&flash, 0);
-    w25q128jv_read(&flash, 1, 85, 10, data);
+    w25q128jv_read(&flash, 1, 85, 10, read_data);
+    w25q128jv_write_enable(&flash);
+    w25q128jv_write_page(&flash, 1, 85, 3, write_data);
+    w25q128jv_write_disable(&flash);
+    w25q128jv_read(&flash, 1, 85, 10, read_data);
 
     float accel[3];
     float gyro[3];
