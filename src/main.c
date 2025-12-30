@@ -21,22 +21,26 @@ int main(void) {
     w25q128jv_t flash = {
         .spi_transfer = board_w25q128jv_spi_transfer
     };
+
     volatile uint8_t flash_id = w25q128jv_read_id(&flash);
     flash_id = flash_id;
 
+    uint8_t data[3];
+    w25q128jv_read(&flash, 0, 0, 3, data);
+
     float accel[3];
     float gyro[3];
+    float gyro_sum[3] = {0.0f, 0.0f, 0.0f};
+    float i = 0;
     float roll;
     float pitch;
     float yaw;
+    bool on = false;
     uint32_t led_timer = 0;
     uint32_t ins_timer = 0;
-    float i = 0;
-    float gyro_sum[3] = {0.0f, 0.0f, 0.0f};
 
     for (;;) {
         if (timer_expired(&led_timer, 500)) {
-            static bool on;
             gpio_write(board_pins.led, on);
             on = !on;
         }
