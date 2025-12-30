@@ -24,19 +24,19 @@ int main(void) {
 
     uint8_t read_data[10] = {0};
     uint8_t write_data[3] = {1, 2, 3};
-    
+
     w25q128jv_read(&flash, 1, 85, 10, read_data);
-    
+
     w25q128jv_write_enable(&flash);
     w25q128jv_erase_sector(&flash, 0);
     w25q128jv_write_disable(&flash);
-    
+
     w25q128jv_read(&flash, 1, 85, 10, read_data);
-    
+
     w25q128jv_write_enable(&flash);
     w25q128jv_write_page(&flash, 1, 85, 3, write_data);
     w25q128jv_write_disable(&flash);
-    
+
     w25q128jv_read(&flash, 1, 84, 10, read_data);
 
     float accel[3];

@@ -9,7 +9,7 @@ uint8_t w25q128jv_read_id(w25q128jv_t *device) {
 
 /*
  * @brief Read data from the memory
- * 
+ *
  * @param device The device handle
  * @param start_page The page number to start the read from 0 to 65525
  * @param offset The offset in the  page from 0 to 255
@@ -19,10 +19,10 @@ uint8_t w25q128jv_read_id(w25q128jv_t *device) {
 void w25q128jv_read(w25q128jv_t *device, uint32_t start_page, uint8_t offset,
     uint32_t size, uint8_t *data) {
     uint32_t mem_addr = (start_page * 256) + offset;
-    
+
     uint8_t tx_buf[size + 4];
     uint8_t rx_buf[size + 4];
-    
+
     for (uint32_t i = 0; i < size + 4; i++) {
         tx_buf[i] = 0;
     }
@@ -31,7 +31,7 @@ void w25q128jv_read(w25q128jv_t *device, uint32_t start_page, uint8_t offset,
     tx_buf[1] = (mem_addr >> 16) & 0xFF;
     tx_buf[2] = (mem_addr >> 8) & 0xFF;
     tx_buf[3] = mem_addr & 0xFF;
-    
+
     device->spi_transfer(tx_buf, rx_buf, size + 4);
 
     for (uint32_t i = 0; i < size; i++) {
@@ -42,7 +42,7 @@ void w25q128jv_read(w25q128jv_t *device, uint32_t start_page, uint8_t offset,
 /*
  * @brief Enable write
  *
- * Device may be unresponsive and ignore instructions for 
+ * Device may be unresponsive and ignore instructions for
  * up to 5 ms after use according to section 7.1.1 in datasheet
  */
 void w25q128jv_write_enable(w25q128jv_t *device) {
@@ -54,7 +54,7 @@ void w25q128jv_write_enable(w25q128jv_t *device) {
 /*
  * @brief Disable write
  *
- * Device may be unresponsive and ignore instructions for 
+ * Device may be unresponsive and ignore instructions for
  * up to 5 ms after use according to section 7.1.1 in datasheet
  */
 void w25q128jv_write_disable(w25q128jv_t *device) {
@@ -76,14 +76,14 @@ void w25q128jv_erase_sector(w25q128jv_t *device, uint16_t sector) {
     uint8_t tx_buf[4] = {W25Q128JV_SECTOR_ERASE, (mem_addr >> 16) & 0xFF,
         (mem_addr >> 8) & 0xFF, mem_addr & 0xFF};
     uint8_t rx_buf[4];
-   
+
     device->spi_transfer(tx_buf, rx_buf, 4);
 }
 
 /*
  * @brief Write data to memory
  *
- * Must enable write and erase the sector before running. Device may be 
+ * Must enable write and erase the sector before running. Device may be
  * unresponsive and ignore instructions for up to 5 ms after use according to
  * section 7.1.1 and 9.6 in datasheet (page program time)
  *
@@ -96,10 +96,10 @@ void w25q128jv_erase_sector(w25q128jv_t *device, uint16_t sector) {
 void w25q128jv_write_page(w25q128jv_t *device, uint32_t page, uint16_t offset,
     uint32_t size, uint8_t *data) {
     uint32_t mem_addr = page * 256 + offset;
-    
+
     uint8_t tx_buf[size + 4];
     uint8_t rx_buf[size + 4];
-    
+
     tx_buf[0] = W25Q128JV_PAGE_PROGRAM;
     tx_buf[1] = (mem_addr >> 16) & 0xFF;
     tx_buf[2] = (mem_addr >> 8) & 0xFF;
