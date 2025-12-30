@@ -10,6 +10,7 @@ SOURCES = src/main.c \
           src/hal.c \
           src/board.c \
           src/icm45686.c \
+          src/w25q128jv.c \
           src/quaternion.c \
           src/math.c \
           src/ins.c

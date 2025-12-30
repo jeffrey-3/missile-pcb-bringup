@@ -61,6 +61,7 @@ struct spi {
     volatile uint32_t CR1, CR2, SR, DR, CRCPR, RXCRCR, TXCRCR, I2SCFGR, I2SPR;
 };
 #define SPI1 ((struct spi *) 0x40013000)
+#define SPI2 ((struct spi *) 0x40003800)
 
 void spi_init(struct spi *spi);
 uint8_t spi_transfer(struct spi *spi, uint8_t tx_data);

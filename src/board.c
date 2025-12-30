@@ -7,13 +7,18 @@ const board_pins_t board_pins = {
     .cs = PIN('A', 1),
     .miso = PIN('A', 6),
     .mosi = PIN('A', 12),
-    .sck = PIN('A', 5)
+    .sck = PIN('A', 5),
+    .spi2_cs = PIN('C', 15),
+    .spi2_miso = PIN('B', 2),
+    .spi2_mosi = PIN('A', 4),
+    .spi2_sck = PIN('A', 0)
 };
 
 void board_init(void) {
     board_setup_led();
     board_setup_uart();
     board_setup_spi();
+    board_setup_spi2();
 }
 
 void board_setup_led(void) {
@@ -46,9 +51,32 @@ void board_setup_spi(void) {
     spi_init(SPI1);
 }
 
+void board_setup_spi2(void) {
+    gpio_set_mode(board_pins.spi2_cs, GPIO_MODE_OUTPUT);
+    gpio_write(board_pins.spi2_cs, true);
+
+    gpio_set_mode(board_pins.spi2_miso, GPIO_MODE_AF);
+    gpio_set_af(board_pins.spi2_miso, 1);
+
+    gpio_set_mode(board_pins.spi2_mosi, GPIO_MODE_AF);
+    gpio_set_af(board_pins.spi2_mosi, 1);
+
+    gpio_set_mode(board_pins.spi2_sck, GPIO_MODE_AF);
+    gpio_set_af(board_pins.spi2_sck, 0);
+
+    spi_init(SPI2);
+}
+
 void board_icm45686_spi_transfer(const uint8_t *tx_buf, uint8_t *rx_buf,
     size_t len) {
     gpio_write(board_pins.cs, false);
     spi_transfer_buf(SPI1, tx_buf, rx_buf, len);
     gpio_write(board_pins.cs, true);
+}
+
+void board_w25q128jv_spi_transfer(const uint8_t *tx_buf, uint8_t *rx_buf,
+    size_t len) {
+    gpio_write(board_pins.spi2_cs, false);
+    spi_transfer_buf(SPI2, tx_buf, rx_buf, len);
+    gpio_write(board_pins.spi2_cs, true);
 }

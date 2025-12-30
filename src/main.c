@@ -1,6 +1,7 @@
 #include "board.h"
 #include "math.h"
 #include "icm45686.h"
+#include "w25q128jv.h"
 #include "quaternion.h"
 #include "ins.h"
 
@@ -16,6 +17,12 @@ int main(void) {
         .spi_transfer = board_icm45686_spi_transfer
     };
     icm45686_init(&imu);
+
+    w25q128jv_t flash = {
+        .spi_transfer = board_w25q128jv_spi_transfer
+    };
+    volatile uint8_t flash_id = w25q128jv_read_id(&flash);
+    flash_id = flash_id;
 
     float accel[3];
     float gyro[3];

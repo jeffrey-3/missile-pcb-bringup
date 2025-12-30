@@ -102,6 +102,8 @@ uint8_t uart_read_byte(struct uart *uart) {
 void spi_init(struct spi *spi) {
     if (spi == SPI1) {
         RCC->APBENR2 |= BIT(12);
+    } else if (spi == SPI2) {
+        RCC->APBENR1 |= BIT(14);
     }
 
     spi->CR1 |= BIT(2); // Set as master
