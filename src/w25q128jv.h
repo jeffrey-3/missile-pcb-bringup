@@ -17,7 +17,6 @@ typedef void (*w25q128jv_delay_ms_t)(uint32_t ms);
 
 typedef struct {
     w25q128jv_spi_transfer_t spi_transfer;
-    w25q128jv_delay_ms_t delay_ms;
 } w25q128jv_t;
 
 uint8_t w25q128jv_read_id(w25q128jv_t *device);
