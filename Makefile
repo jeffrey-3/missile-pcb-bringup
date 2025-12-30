@@ -14,7 +14,8 @@ SOURCES = src/main.c \
           src/quaternion.c \
           src/math.c \
           src/ins.c \
-          src/logger.c
+          src/logger.c \
+          src/vehicle.c
 
 build: build/firmware.elf
 

@@ -15,6 +15,8 @@ const board_pins_t board_pins = {
 };
 
 void board_init(void) {
+    systick_init();
+
     board_setup_led();
     board_setup_uart();
     board_setup_spi();
