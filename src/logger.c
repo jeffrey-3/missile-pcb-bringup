@@ -1,13 +1,19 @@
 #include "logger.h"
 
-void logger_init(logger_t *logger, uint16_t page_length,
-    uint16_t sector_erase_time) {
-    logger->messages_per_page = page_length / sizeof(message_t);
-    logger->sector_erase_time = sector_erase_time;
+void logger_init(logger_t *logger) {
     logger->message_index = 0;
     logger->current_page = 0;
+
+    logger->write_enable();
+    logger->delay_ms(logger->write_enable_time);
 }
 
+/*
+ * @brief Write buffer to memory
+ *
+ * Write may take some time to complete at the hardware level, so do not call
+ * again before the last write is complete
+ */
 void logger_write(logger_t *logger, message_t message) {
     logger->buffer[logger->message_index] = message;
     logger->message_index++;

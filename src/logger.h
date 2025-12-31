@@ -9,18 +9,24 @@ typedef struct {
 } message_t;
 
 typedef void (*logger_write_page_t)(uint32_t page, uint8_t *data);
+typedef void (*logger_write_enable_t)(void);
+typedef void (*logger_write_disable_t)(void);
+typedef void (*logger_delay_ms_t)(uint32_t ms);
 
 typedef struct {
     logger_write_page_t write_page;
+    logger_write_enable_t write_enable;
+    logger_write_disable_t write_disable;
+    logger_delay_ms_t delay_ms;
     uint16_t messages_per_page;
     uint16_t sector_erase_time;
+    uint16_t write_enable_time;
     uint8_t message_index;
     uint32_t current_page;
     message_t *buffer;
 } logger_t;
 
-void logger_init(logger_t *logger, uint16_t page_length,
-    uint16_t sector_erase_time);
+void logger_init(logger_t *logger);
 void logger_write(logger_t *logger, message_t message);
 
 #endif // LOGGER_H

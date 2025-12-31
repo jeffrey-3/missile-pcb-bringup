@@ -11,18 +11,22 @@ float i = 0;
 float roll;
 float pitch;
 float yaw;
-bool on = false;
+bool on;
 uint32_t led_timer = 0;
 uint32_t ins_timer = 0;
 
 void vehicle_init() {
-    vehicle.imu.spi_transfer = board_icm45686_spi_transfer;
-    vehicle.flash.spi_transfer = board_w25q128jv_spi_transfer;
-
     board_init();
-    ins_init(&vehicle.ins);
+
+    vehicle.imu.spi_transfer = board_icm45686_spi_transfer;
     icm45686_init(&vehicle.imu);
-    
+
+    vehicle.flash.spi_transfer = board_w25q128jv_spi_transfer;
+ 
+    ins_init(&vehicle.ins);
+
+    vehicle_logger_init();
+
     w25q128jv_read(&vehicle.flash, 1, 85, 10, read_data);
 
     w25q128jv_write_enable(&vehicle.flash);
@@ -74,4 +78,32 @@ void vehicle_update() {
             (double)vehicle.ins.vel.z);
         uart_write_buf(UART1, uart_buf, strlen(uart_buf));
     }
+}
+
+void vehicle_logger_init() {
+    uint8_t messages_per_page = 3;
+    message_t logger_buffer[messages_per_page];
+    
+    vehicle.logger.write_page = vehicle_logger_write_page;
+    vehicle.logger.write_enable = vehicle_logger_write_enable;
+    vehicle.logger.write_disable = vehicle_logger_write_disable;
+    vehicle.logger.delay_ms = delay;
+    vehicle.logger.buffer = logger_buffer;
+    vehicle.logger.messages_per_page = messages_per_page;
+    vehicle.logger.sector_erase_time = 450;
+    vehicle.logger.write_enable_time = 5;
+
+    logger_init(&vehicle.logger);
+}
+
+void vehicle_logger_write_page(uint32_t page, uint8_t *data) {
+    w25q128jv_write_page(&vehicle.flash, page, 0, 256, data);
+}
+
+void vehicle_logger_write_enable() {
+    w25q128jv_write_enable(&vehicle.flash);
+}
+
+void vehicle_logger_write_disable() {
+    w25q128jv_write_disable(&vehicle.flash);
 }
