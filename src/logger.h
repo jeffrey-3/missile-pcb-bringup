@@ -28,7 +28,7 @@ typedef struct {
     uint16_t write_enable_time;
     uint8_t message_index;
     uint32_t current_page;
-    message_t buffer[3]; // I can't use message_t *buffer???? why
+    message_t *buffer;
 } logger_t;
 
 void logger_init(logger_t *logger);

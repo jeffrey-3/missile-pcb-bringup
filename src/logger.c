@@ -2,8 +2,8 @@
 
 void logger_init(logger_t *logger) {
     logger->message_index = 0;
-    logger->current_page = 0; 
-        
+    logger->current_page = 0;
+
     logger->write_enable();
     logger->delay_ms(logger->write_enable_time);
 }
@@ -24,7 +24,7 @@ void logger_write(logger_t *logger, message_t message) {
         logger->message_index = 0;
     } else {
         // After every write, the flash chip disables write, so must re-enable
-        logger->write_enable();
+            logger->write_enable();
     }
 }
 
@@ -38,17 +38,17 @@ void logger_erase(logger_t *logger, uint16_t sector) {
 
 /*
  * @brief Read one page and get message structs
- * 
+ *
  * This function is very slow but temporary and not used in main loop anyways
  */
 void logger_read(logger_t *logger, uint32_t page, message_t *messages) {
     logger->write_disable();
     logger->delay_ms(logger->write_enable_time);
-  
+
     uint32_t size = logger->messages_per_page * sizeof(message_t);
     uint8_t data[size];
     logger->read_page(page, data);
-    
+
     for (uint32_t i = 0; i < logger->messages_per_page; i++) {
         memcpy(&messages[i], &data[i * sizeof(message_t)], sizeof(message_t));
     }

@@ -2,6 +2,8 @@
 
 static vehicle_t vehicle;
 
+static message_t logger_buffer[MESSAGES_PER_PAGE];
+
 void vehicle_init() {
     vehicle.led_timer = 0;
     vehicle.ins_timer = 0;
@@ -10,7 +12,7 @@ void vehicle_init() {
     board_init();
 
     vehicle_imu_init();
-    vehicle_flash_init(); 
+    vehicle_flash_init();
     vehicle_ins_init();
     vehicle_logger_init();
 
@@ -93,15 +95,15 @@ void vehicle_update_retreive() {
     for (uint32_t i = 0; i < num_pages; i++) {
         char buf[100];
         snprintf(buf, sizeof(buf), "Reading page %ld out of %ld\r\n", i + 1,
-            num_pages); 
+            num_pages);
         uart_write_buf(UART1, buf, strlen(buf));
-        
+
         message_t messages[vehicle.logger.messages_per_page];
         logger_read(&vehicle.logger, i, messages);
 
         for (uint8_t j = 0; j < vehicle.logger.messages_per_page; j++) {
             message_t message = messages[j];
-            
+
             char uart_buf[64];
             snprintf(uart_buf, sizeof(uart_buf), "%ld,%.2f\r\n",
                 message.counter, (double)message.roll);
@@ -110,7 +112,7 @@ void vehicle_update_retreive() {
     }
 
     uart_write_buf(UART1, "Finished\r\n", strlen("Finished\r\n"));
-    
+
     for (;;) {
         spin(1);
     }
@@ -123,10 +125,10 @@ void vehicle_update_erase() {
 
     for (uint16_t i = 0; i < num_sectors; i++) {
         logger_erase(&vehicle.logger, i);
-   
+
         char uart_buf[100];
         snprintf(uart_buf, sizeof(uart_buf), "Erased %d out of %d\r\n",
-            i + 1, num_sectors); 
+            i + 1, num_sectors);
         uart_write_buf(UART1, uart_buf, strlen(uart_buf));
     }
 
@@ -202,20 +204,16 @@ void vehicle_ins_init() {
 }
 
 void vehicle_logger_init() {
-    uint8_t messages_per_page = 3;
-    // message_t logger_buffer[messages_per_page];
-
     vehicle.logger.write_page = vehicle_logger_write_page;
     vehicle.logger.erase_sector = vehicle_logger_erase_sector;
     vehicle.logger.write_enable = vehicle_logger_write_enable;
     vehicle.logger.write_disable = vehicle_logger_write_disable;
     vehicle.logger.read_page = vehicle_logger_read_page;
     vehicle.logger.delay_ms = delay;
-    // vehicle.logger.buffer = logger_buffer;
-    vehicle.logger.messages_per_page = messages_per_page;
+    vehicle.logger.buffer = logger_buffer;
+    vehicle.logger.messages_per_page = MESSAGES_PER_PAGE;
     vehicle.logger.sector_erase_time = 450;
     vehicle.logger.write_enable_time = 5;
-
     logger_init(&vehicle.logger);
 }
 
