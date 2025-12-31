@@ -12,6 +12,7 @@ typedef void (*logger_write_page_t)(uint32_t page, uint8_t *data);
 typedef void (*logger_erase_sector_t)(uint16_t sector);
 typedef void (*logger_write_enable_t)(void);
 typedef void (*logger_write_disable_t)(void);
+typedef void (*logger_read_t)(uint32_t size, uint8_t *data);
 typedef void (*logger_delay_ms_t)(uint32_t ms);
 
 typedef struct {
@@ -19,6 +20,7 @@ typedef struct {
     logger_erase_sector_t erase_sector;
     logger_write_enable_t write_enable;
     logger_write_disable_t write_disable;
+    logger_read_t read;
     logger_delay_ms_t delay_ms;
     uint16_t messages_per_page;
     uint16_t sector_erase_time;
@@ -31,5 +33,6 @@ typedef struct {
 void logger_init(logger_t *logger);
 void logger_write(logger_t *logger, message_t message);
 void logger_erase(logger_t *logger, uint16_t sector);
+void logger_read(logger_t *logger, uint32_t size, uint8_t *data);
 
 #endif // LOGGER_H

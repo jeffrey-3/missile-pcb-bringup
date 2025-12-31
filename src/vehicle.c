@@ -79,9 +79,10 @@ void vehicle_update_calibrate() {
 }
 
 void vehicle_update_retreive() {
-    if (timer_expired(&vehicle.led_timer, 500)) {
-        gpio_write(board_pins.led, vehicle.led_on);
-        vehicle.led_on = !vehicle.led_on;
+    
+
+    for (;;) {
+        spin(1);
     }
 }
 
@@ -178,6 +179,7 @@ void vehicle_logger_init() {
     vehicle.logger.erase_sector = vehicle_logger_erase_sector;
     vehicle.logger.write_enable = vehicle_logger_write_enable;
     vehicle.logger.write_disable = vehicle_logger_write_disable;
+    vehicle.logger.read = vehicle_logger_read;
     vehicle.logger.delay_ms = delay;
     vehicle.logger.buffer = logger_buffer;
     vehicle.logger.messages_per_page = messages_per_page;
@@ -201,4 +203,8 @@ void vehicle_logger_write_enable() {
 
 void vehicle_logger_write_disable() {
     w25q128jv_write_disable(&vehicle.flash);
+}
+
+void vehicle_logger_read(uint32_t size, uint8_t *data) {
+    w25q128jv_read(&vehicle.flash, 0, 0, size, data);
 }

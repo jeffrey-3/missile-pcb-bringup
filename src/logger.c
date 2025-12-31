@@ -32,3 +32,16 @@ void logger_erase(logger_t *logger, uint16_t sector) {
     logger->erase_sector(sector);
     logger->delay_ms(logger->sector_erase_time);
 }
+
+/*
+ * @brief Read memory
+ */
+void logger_read(logger_t *logger, uint32_t size, uint8_t *data) {
+    logger->write_disable();
+    logger->delay_ms(logger->write_enable_time);
+    
+    logger->read(size, data);
+    
+    logger->write_enable();
+    logger->delay_ms(logger->write_enable_time);
+}
