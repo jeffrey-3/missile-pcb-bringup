@@ -88,7 +88,7 @@ void vehicle_update_calibrate() {
 }
 
 void vehicle_update_retreive() {
-    uint32_t num_pages = 5;
+    uint32_t num_pages = 15;
 
     for (uint32_t i = 0; i < num_pages; i++) {
         char buf[100];

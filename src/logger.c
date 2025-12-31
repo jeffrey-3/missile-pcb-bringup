@@ -30,6 +30,9 @@ void logger_write(logger_t *logger, message_t message) {
         logger->write_page(logger->current_page, (uint8_t *)logger->buffer);
         logger->current_page++;
         logger->message_index = 0;
+    } else {
+        logger->write_enable(); // Check top comments, see if this fix it
+        // THIS DOES FIX ISSUE
     }
 }
 
