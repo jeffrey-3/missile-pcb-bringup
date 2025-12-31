@@ -27,6 +27,7 @@ typedef struct {
     bool led_on;
     uint32_t led_timer;
     uint32_t ins_timer;
+    uint32_t counter;
 } vehicle_t;
 
 void vehicle_init();

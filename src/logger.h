@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <string.h>
 
-typedef struct {
+typedef struct __attribute__((packed)) {
     uint32_t counter;
     float roll;
 } message_t;

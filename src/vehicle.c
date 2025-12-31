@@ -5,6 +5,7 @@ static vehicle_t vehicle;
 void vehicle_init() {
     vehicle.led_timer = 0;
     vehicle.ins_timer = 0;
+    vehicle.counter = 0;
 
     board_init();
 
@@ -37,6 +38,14 @@ void vehicle_update_flight() {
     if (timer_expired(&vehicle.led_timer, 500)) {
         gpio_write(board_pins.led, vehicle.led_on);
         vehicle.led_on = !vehicle.led_on;
+
+        // Log data
+        vehicle.counter++;
+        message_t message = {
+            .counter = vehicle.counter,
+            .roll = 1.45f
+        };
+        logger_write(&vehicle.logger, message);
     }
 
     if (timer_expired(&vehicle.ins_timer, 10)) {
@@ -79,7 +88,7 @@ void vehicle_update_calibrate() {
 }
 
 void vehicle_update_retreive() {
-    uint32_t num_pages = 20;
+    uint32_t num_pages = 5;
 
     for (uint32_t i = 0; i < num_pages; i++) {
         char buf[100];
@@ -211,7 +220,8 @@ void vehicle_logger_init() {
 }
 
 void vehicle_logger_write_page(uint32_t page, uint8_t *data) {
-    w25q128jv_write_page(&vehicle.flash, page, 0, 256, data);
+    w25q128jv_write_page(&vehicle.flash, page, 0,
+        vehicle.logger.messages_per_page * sizeof(message_t), data);
 }
 
 void vehicle_logger_erase_sector(uint16_t sector) {
