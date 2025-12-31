@@ -98,13 +98,12 @@ void vehicle_update_erase() {
 }
 
 boot_mode_t vehicle_run_cli() {
+    char cmd_buf[CMD_BUF_LEN];
+    uint8_t idx = 0;
     uint32_t print_timer = 0;
     uint32_t start_time = get_time();
 
     for (;;) {
-        static char cmd_buf[CMD_BUF_LEN];
-        static uint8_t idx = 0;
-
         while (!uart_read_ready(UART1)) {
             // Default to flight mode after 10 seconds
             if (get_time() - start_time > 10000) {
