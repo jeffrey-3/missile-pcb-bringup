@@ -79,8 +79,29 @@ void vehicle_update_calibrate() {
 }
 
 void vehicle_update_retreive() {
-    
+    uint32_t num_pages = 20;
 
+    for (uint32_t i = 0; i < num_pages; i++) {
+        char buf[100];
+        snprintf(buf, sizeof(buf), "Reading page %ld out of %ld\r\n", i + 1,
+            num_pages); 
+        uart_write_buf(UART1, buf, strlen(buf));
+        
+        message_t messages[vehicle.logger.messages_per_page];
+        logger_read(&vehicle.logger, i, messages);
+
+        for (uint8_t j = 0; j < vehicle.logger.messages_per_page; j++) {
+            message_t message = messages[i];
+            
+            char uart_buf[64];
+            snprintf(uart_buf, sizeof(uart_buf), "%ld,%.2f\r\n",
+                message.counter, (double)message.roll);
+            uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+        }
+    }
+
+    uart_write_buf(UART1, "Finished\r\n", strlen("Finished\r\n"));
+    
     for (;;) {
         spin(1);
     }
@@ -179,7 +200,7 @@ void vehicle_logger_init() {
     vehicle.logger.erase_sector = vehicle_logger_erase_sector;
     vehicle.logger.write_enable = vehicle_logger_write_enable;
     vehicle.logger.write_disable = vehicle_logger_write_disable;
-    vehicle.logger.read = vehicle_logger_read;
+    vehicle.logger.read_page = vehicle_logger_read_page;
     vehicle.logger.delay_ms = delay;
     vehicle.logger.buffer = logger_buffer;
     vehicle.logger.messages_per_page = messages_per_page;
@@ -205,6 +226,7 @@ void vehicle_logger_write_disable() {
     w25q128jv_write_disable(&vehicle.flash);
 }
 
-void vehicle_logger_read(uint32_t size, uint8_t *data) {
-    w25q128jv_read(&vehicle.flash, 0, 0, size, data);
+void vehicle_logger_read_page(uint32_t page, uint8_t *data) {
+    w25q128jv_read(&vehicle.flash, page, 0,
+        vehicle.logger.messages_per_page * sizeof(message_t), data);
 }
