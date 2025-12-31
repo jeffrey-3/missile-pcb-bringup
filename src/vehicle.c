@@ -2,54 +2,46 @@
 
 static vehicle_t vehicle;
 
-uint8_t read_data[10] = {0};
-uint8_t write_data[3] = {1, 2, 3};
-float accel[3];
-float gyro[3];
-float roll;
-float pitch;
-float yaw;
-bool on;
-uint32_t led_timer = 0;
-uint32_t ins_timer = 0;
-
 void vehicle_init() {
+    vehicle.led_timer = 0;
+    vehicle.ins_timer = 0;
+
     board_init();
 
     vehicle_imu_init();
-
-    vehicle.flash.spi_transfer = board_w25q128jv_spi_transfer;
- 
-    ins_init(&vehicle.ins);
-
+    vehicle_flash_init(); 
+    vehicle_ins_init();
     vehicle_logger_init();
 
     vehicle.boot_mode = vehicle_run_cli();
-
-    for (;;) spin(1);
-
-    w25q128jv_read(&vehicle.flash, 1, 85, 10, read_data);
-
-    w25q128jv_write_enable(&vehicle.flash);
-    w25q128jv_erase_sector(&vehicle.flash, 0);
-    w25q128jv_write_disable(&vehicle.flash);
-
-    w25q128jv_read(&vehicle.flash, 1, 85, 10, read_data);
-
-    w25q128jv_write_enable(&vehicle.flash);
-    w25q128jv_write_page(&vehicle.flash, 1, 85, 3, write_data);
-    w25q128jv_write_disable(&vehicle.flash);
-
-    w25q128jv_read(&vehicle.flash, 1, 84, 10, read_data);
 }
 
 void vehicle_update() {
-    if (timer_expired(&led_timer, 500)) {
-        gpio_write(board_pins.led, on);
-        on = !on;
+    switch (vehicle.boot_mode) {
+        case BOOT_MODE_FLIGHT:
+            vehicle_update_flight();
+            break;
+        case BOOT_MODE_CALIBRATE:
+            vehicle_update_calibrate();
+            break;
+        case BOOT_MODE_RETREIVE:
+            vehicle_update_retreive();
+            break;
+        case BOOT_MODE_ERASE:
+            vehicle_update_erase();
+            break;
+    }
+}
+
+void vehicle_update_flight() {
+    if (timer_expired(&vehicle.led_timer, 500)) {
+        gpio_write(board_pins.led, vehicle.led_on);
+        vehicle.led_on = !vehicle.led_on;
     }
 
-    if (timer_expired(&ins_timer, 10)) {
+    if (timer_expired(&vehicle.ins_timer, 10)) {
+        float accel[3];
+        float gyro[3];
         icm45686_read_accel(&vehicle.imu, accel);
         icm45686_read_gyro(&vehicle.imu, gyro);
 
@@ -60,6 +52,9 @@ void vehicle_update() {
         ins_update(&vehicle.ins, gyro[0], gyro[1], gyro[2],
             accel[0], accel[1], accel[2], 0.01f);
 
+        float roll;
+        float pitch;
+        float yaw;
         quat_to_euler(vehicle.ins.q, &roll, &pitch, &yaw);
 
         roll *= RAD2DEG;
@@ -73,6 +68,27 @@ void vehicle_update() {
             (double)vehicle.ins.vel.x, (double)vehicle.ins.vel.y,
             (double)vehicle.ins.vel.z);
         uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+    }
+}
+
+void vehicle_update_calibrate() {
+    if (timer_expired(&vehicle.led_timer, 500)) {
+        gpio_write(board_pins.led, vehicle.led_on);
+        vehicle.led_on = !vehicle.led_on;
+    }
+}
+
+void vehicle_update_retreive() {
+    if (timer_expired(&vehicle.led_timer, 500)) {
+        gpio_write(board_pins.led, vehicle.led_on);
+        vehicle.led_on = !vehicle.led_on;
+    }
+}
+
+void vehicle_update_erase() {
+    if (timer_expired(&vehicle.led_timer, 500)) {
+        gpio_write(board_pins.led, vehicle.led_on);
+        vehicle.led_on = !vehicle.led_on;
     }
 }
 
@@ -126,6 +142,14 @@ boot_mode_t vehicle_run_cli() {
 void vehicle_imu_init() {
     vehicle.imu.spi_transfer = board_icm45686_spi_transfer;
     icm45686_init(&vehicle.imu);
+}
+
+void vehicle_flash_init() {
+    vehicle.flash.spi_transfer = board_w25q128jv_spi_transfer;
+}
+
+void vehicle_ins_init() {
+    ins_init(&vehicle.ins);
 }
 
 void vehicle_logger_init() {

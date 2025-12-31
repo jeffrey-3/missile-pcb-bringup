@@ -24,12 +24,21 @@ typedef struct {
     logger_t logger;
     icm45686_t imu;
     w25q128jv_t flash;
+    bool led_on;
+    uint32_t led_timer;
+    uint32_t ins_timer;
 } vehicle_t;
 
 void vehicle_init();
 void vehicle_update();
+void vehicle_update_flight();
+void vehicle_update_calibrate();
+void vehicle_update_retreive();
+void vehicle_update_erase();
 boot_mode_t vehicle_run_cli();
 void vehicle_imu_init();
+void vehicle_flash_init();
+void vehicle_ins_init();
 void vehicle_logger_init();
 void vehicle_logger_write_page(uint32_t page, uint8_t *data);
 void vehicle_logger_erase_sector(uint16_t sector);
