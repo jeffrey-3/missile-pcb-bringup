@@ -16,54 +16,17 @@ uint32_t ins_timer = 0;
 void vehicle_init() {
     board_init();
 
-    vehicle.imu.spi_transfer = board_icm45686_spi_transfer;
-    icm45686_init(&vehicle.imu);
+    vehicle_imu_init();
 
     vehicle.flash.spi_transfer = board_w25q128jv_spi_transfer;
  
     ins_init(&vehicle.ins);
 
-    // vehicle_logger_init();
- 
-    char uart_buf[100] = "Missile Command Line Interface\r\n(1) Flight\r\n"
-       "(2) Calibrate\r\n(3) Retreive\r\n(9) Erase\r\n";
-    uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+    vehicle_logger_init();
 
-    for (;;) {
-        static char cmd_buf[CMD_BUF_LEN];
-        static uint8_t idx = 0;
+    vehicle.boot_mode = vehicle_run_cli();
 
-        while (!uart_read_ready(UART1)) {
-            spin(1);
-        }
-
-        char c = uart_read_byte(UART1);
-
-        if (c == '\r' || c == '\n') {
-            cmd_buf[idx] = '\0';
-            idx = 0;
-
-            if (strcmp(cmd_buf, "1") == 0) {
-                uart_write_buf(UART1, "Flight Selected\r\n", 17);
-            } else if (strcmp(cmd_buf, "2") == 0) {
-                uart_write_buf(UART1, "Calibrate Selected\r\n", 20);
-            } else if (strcmp(cmd_buf, "3") == 0) {
-                uart_write_buf(UART1, "Retrieve Selected\r\n", 19);
-            } else if (strcmp(cmd_buf, "9") == 0) {
-                uart_write_buf(UART1, "Erase Selected\r\n", 16);
-            } else {
-                uart_write_buf(UART1, "Invalid\r\n", 9);
-            }
-
-            continue;
-        }
-
-        if (idx < (CMD_BUF_LEN - 1)) {
-            cmd_buf[idx++] = c;
-        } else {
-            idx = 0;
-        }
-    }
+    for (;;) spin(1);
 
     w25q128jv_read(&vehicle.flash, 1, 85, 10, read_data);
 
@@ -113,6 +76,58 @@ void vehicle_update() {
     }
 }
 
+boot_mode_t vehicle_run_cli() {
+    char uart_buf[100] = "Missile Command Line Interface\r\n(1) Flight\r\n"
+       "(2) Calibrate\r\n(3) Retreive\r\n(9) Erase\r\n";
+    uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+
+    for (;;) {
+        static char cmd_buf[CMD_BUF_LEN];
+        static uint8_t idx = 0;
+
+        while (!uart_read_ready(UART1)) {
+            spin(1);
+        }
+
+        char c = uart_read_byte(UART1);
+
+        if (c == '\r' || c == '\n') {
+            cmd_buf[idx] = '\0';
+            idx = 0;
+
+            if (strcmp(cmd_buf, "1") == 0) {
+                uart_write_buf(UART1, "Flight Selected\r\n", 17);
+                return BOOT_MODE_FLIGHT;
+            } else if (strcmp(cmd_buf, "2") == 0) {
+                uart_write_buf(UART1, "Calibrate Selected\r\n", 20);
+                return BOOT_MODE_CALIBRATE;
+            } else if (strcmp(cmd_buf, "3") == 0) {
+                uart_write_buf(UART1, "Retrieve Selected\r\n", 19);
+                return BOOT_MODE_RETREIVE;
+            } else if (strcmp(cmd_buf, "9") == 0) {
+                uart_write_buf(UART1, "Erase Selected\r\n", 16);
+                return BOOT_MODE_ERASE;
+            } else {
+                uart_write_buf(UART1, "Invalid\r\n", 9);
+            }
+
+            continue;
+        }
+
+        if (idx < (CMD_BUF_LEN - 1)) {
+            cmd_buf[idx++] = c;
+        } else {
+            idx = 0;
+        }
+    }
+
+}
+
+void vehicle_imu_init() {
+    vehicle.imu.spi_transfer = board_icm45686_spi_transfer;
+    icm45686_init(&vehicle.imu);
+}
+
 void vehicle_logger_init() {
     uint8_t messages_per_page = 3;
     message_t logger_buffer[messages_per_page];
@@ -126,7 +141,7 @@ void vehicle_logger_init() {
     vehicle.logger.sector_erase_time = 450;
     vehicle.logger.write_enable_time = 5;
 
-    logger_init(&vehicle.logger);
+    // logger_init(&vehicle.logger);
 }
 
 void vehicle_logger_write_page(uint32_t page, uint8_t *data) {

@@ -28,6 +28,8 @@ typedef struct {
 
 void vehicle_init();
 void vehicle_update();
+boot_mode_t vehicle_run_cli();
+void vehicle_imu_init();
 void vehicle_logger_init();
 void vehicle_logger_write_page(uint32_t page, uint8_t *data);
 void vehicle_logger_erase_sector(uint16_t sector);
