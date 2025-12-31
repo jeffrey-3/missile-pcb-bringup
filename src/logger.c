@@ -2,8 +2,13 @@
 
 void logger_init(logger_t *logger) {
     logger->message_index = 0;
-    logger->current_page = 0;
-
+    logger->current_page = 2; // Set to 2 to see if pages other than 1 works...
+                            // YES IT DOES WORK AND READ WORKS
+                            // But the following pages don't work!
+                        // Maybe because I need write_disable()?
+                       // According to datasheet, right after write it sets 
+                        // write enable to zero!!!! so I need to enable again
+        
     logger->write_enable();
     logger->delay_ms(logger->write_enable_time);
 }
@@ -21,6 +26,7 @@ void logger_write(logger_t *logger, message_t message) {
     if (logger->message_index == logger->messages_per_page) {
         // First page works, second page doesn't work?
         // Viewing the uint8_t data array in read with GDB, its 0xFF
+        // Maybe after every write I need to write_disable or something??? no
         logger->write_page(logger->current_page, (uint8_t *)logger->buffer);
         logger->current_page++;
         logger->message_index = 0;
