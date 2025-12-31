@@ -6,8 +6,6 @@ uint8_t read_data[10] = {0};
 uint8_t write_data[3] = {1, 2, 3};
 float accel[3];
 float gyro[3];
-float gyro_sum[3] = {0.0f, 0.0f, 0.0f};
-float i = 0;
 float roll;
 float pitch;
 float yaw;
@@ -25,7 +23,47 @@ void vehicle_init() {
  
     ins_init(&vehicle.ins);
 
-    vehicle_logger_init();
+    // vehicle_logger_init();
+ 
+    char uart_buf[100] = "Missile Command Line Interface\r\n(1) Flight\r\n"
+       "(2) Calibrate\r\n(3) Retreive\r\n(9) Erase\r\n";
+    uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+
+    for (;;) {
+        static char cmd_buf[CMD_BUF_LEN];
+        static uint8_t idx = 0;
+
+        while (!uart_read_ready(UART1)) {
+            spin(1);
+        }
+
+        char c = uart_read_byte(UART1);
+
+        if (c == '\r' || c == '\n') {
+            cmd_buf[idx] = '\0';
+            idx = 0;
+
+            if (strcmp(cmd_buf, "1") == 0) {
+                uart_write_buf(UART1, "Flight Selected\r\n", 17);
+            } else if (strcmp(cmd_buf, "2") == 0) {
+                uart_write_buf(UART1, "Calibrate Selected\r\n", 20);
+            } else if (strcmp(cmd_buf, "3") == 0) {
+                uart_write_buf(UART1, "Retrieve Selected\r\n", 19);
+            } else if (strcmp(cmd_buf, "9") == 0) {
+                uart_write_buf(UART1, "Erase Selected\r\n", 16);
+            } else {
+                uart_write_buf(UART1, "Invalid\r\n", 9);
+            }
+
+            continue;
+        }
+
+        if (idx < (CMD_BUF_LEN - 1)) {
+            cmd_buf[idx++] = c;
+        } else {
+            idx = 0;
+        }
+    }
 
     w25q128jv_read(&vehicle.flash, 1, 85, 10, read_data);
 
@@ -56,11 +94,6 @@ void vehicle_update() {
         gyro[1] = gyro[1] * DEG2RAD + 0.00295f;
         gyro[2] = gyro[2] * DEG2RAD - 0.00020f;
 
-        i += 1;
-        gyro_sum[0] += gyro[0];
-        gyro_sum[1] += gyro[1];
-        gyro_sum[2] += gyro[2];
-
         ins_update(&vehicle.ins, gyro[0], gyro[1], gyro[2],
             accel[0], accel[1], accel[2], 0.01f);
 
@@ -83,7 +116,7 @@ void vehicle_update() {
 void vehicle_logger_init() {
     uint8_t messages_per_page = 3;
     message_t logger_buffer[messages_per_page];
-    
+
     vehicle.logger.write_page = vehicle_logger_write_page;
     vehicle.logger.write_enable = vehicle_logger_write_enable;
     vehicle.logger.write_disable = vehicle_logger_write_disable;
@@ -98,6 +131,10 @@ void vehicle_logger_init() {
 
 void vehicle_logger_write_page(uint32_t page, uint8_t *data) {
     w25q128jv_write_page(&vehicle.flash, page, 0, 256, data);
+}
+
+void vehicle_logger_erase_sector(uint16_t sector) {
+    w25q128jv_erase_sector(&vehicle.flash, sector);
 }
 
 void vehicle_logger_write_enable() {

@@ -6,6 +6,14 @@ void logger_init(logger_t *logger) {
 
     logger->write_enable();
     logger->delay_ms(logger->write_enable_time);
+
+    // Must erase sector before writing
+    // In the future, have an erase command over CLI
+    // Don't write unless erased
+    // Don't need to read to check if it is erased before writing, it just
+    // simply won't work when you write to the chip
+    logger->erase_sector(0);
+    logger->delay_ms(logger->sector_erase_time);
 }
 
 /*
