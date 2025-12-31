@@ -86,13 +86,16 @@ void vehicle_update_retreive() {
 }
 
 void vehicle_update_erase() {
-    // Need to replace 2 with the actual number of sectors
+    // Need to replace num_sectors with the actual number of sectors
     // And preseve area with calibration data
-    for (uint16_t i = 0; i < 2; i++) {
+    uint16_t num_sectors = 10;
+
+    for (uint16_t i = 0; i < num_sectors; i++) {
         logger_erase(&vehicle.logger, i);
    
         char uart_buf[100];
-        snprintf(uart_buf, sizeof(uart_buf), "Erased %d out of 2\r\n", i); 
+        snprintf(uart_buf, sizeof(uart_buf), "Erased %d out of %d\r\n",
+            i + 1, num_sectors); 
         uart_write_buf(UART1, uart_buf, strlen(uart_buf));
     }
 
