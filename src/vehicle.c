@@ -93,16 +93,19 @@ void vehicle_update_erase() {
 }
 
 boot_mode_t vehicle_run_cli() {
-    char uart_buf[100] = "Missile Command Line Interface\r\n(1) Flight\r\n"
-       "(2) Calibrate\r\n(3) Retreive\r\n(9) Erase\r\n";
-    uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+    uint32_t print_timer = 0;
 
     for (;;) {
         static char cmd_buf[CMD_BUF_LEN];
         static uint8_t idx = 0;
 
         while (!uart_read_ready(UART1)) {
-            spin(1);
+            if (timer_expired(&print_timer, 2000)) {
+                char uart_buf[100] = "Missile Command Line Interface\r\n"
+                    "(1) Flight\r\n(2) Calibrate\r\n(3) Retreive\r\n"
+                    "(9) Erase\r\n";
+                uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+            }
         }
 
         char c = uart_read_byte(UART1);
