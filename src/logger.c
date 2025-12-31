@@ -1,8 +1,13 @@
 #include "logger.h"
 
+#define RING_BUFFER_SIZE 1024 // Must be a power of 2
+
+static uint8_t data_buffer[RING_BUFFER_SIZE] = {0};
+
 void logger_init(logger_t *logger) {
-    logger->message_index = 0;
     logger->current_page = 0;
+
+    ring_buffer_setup(&logger->ring_buffer, data_buffer, RING_BUFFER_SIZE);
 
     logger->write_enable();
     logger->delay_ms(logger->write_enable_time);
@@ -15,16 +20,30 @@ void logger_init(logger_t *logger) {
  * again before the last write is complete
  */
 void logger_write(logger_t *logger, message_t message) {
-    logger->buffer[logger->message_index] = message;
-    logger->message_index++;
+    // Add message to buffer
+    uint8_t byte_array[sizeof(message)];
+    memcpy(&byte_array, &message, sizeof(message));
 
-    if (logger->message_index == logger->messages_per_page) {
-        logger->write_page(logger->current_page, (uint8_t *)logger->buffer);
+    for (uint32_t i = 0; i < sizeof(message); i++) {
+        ring_buffer_write(&logger->ring_buffer, byte_array[i]);
+    }
+
+    // Check if buffer is ready to flush
+    uint32_t page_size = logger->messages_per_page * sizeof(message_t);
+    if (ring_buffer_count(&logger->ring_buffer) > page_size) {
+        // Get data from ring buffer
+        uint8_t write_buf[page_size];
+
+        for (uint32_t i = 0; i < page_size; i++) {
+            ring_buffer_read(&logger->ring_buffer, &write_buf[i]);
+        }
+        
+        // Write the data
+        logger->write_page(logger->current_page, write_buf);
         logger->current_page++;
-        logger->message_index = 0;
     } else {
         // After every write, the flash chip disables write, so must re-enable
-            logger->write_enable();
+        logger->write_enable();
     }
 }
 

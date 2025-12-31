@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "ring_buffer.h"
 
 typedef struct __attribute__((packed)) {
     uint32_t counter;
@@ -26,9 +27,8 @@ typedef struct {
     uint16_t messages_per_page;
     uint16_t sector_erase_time;
     uint16_t write_enable_time;
-    uint8_t message_index;
     uint32_t current_page;
-    message_t *buffer;
+    ring_buffer_t ring_buffer;
 } logger_t;
 
 void logger_init(logger_t *logger);

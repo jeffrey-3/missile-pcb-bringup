@@ -41,3 +41,6 @@ bool ring_buffer_write(ring_buffer_t* rb, uint8_t byte) {
   return true;
 }
 
+uint32_t ring_buffer_count(ring_buffer_t* rb) {
+    return (rb->write_index - rb->read_index) & rb->mask;
+}

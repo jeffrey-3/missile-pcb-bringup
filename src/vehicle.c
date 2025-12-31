@@ -2,8 +2,6 @@
 
 static vehicle_t vehicle;
 
-static message_t logger_buffer[MESSAGES_PER_PAGE];
-
 void vehicle_init() {
     vehicle.led_timer = 0;
     vehicle.ins_timer = 0;
@@ -210,8 +208,7 @@ void vehicle_logger_init() {
     vehicle.logger.write_disable = vehicle_logger_write_disable;
     vehicle.logger.read_page = vehicle_logger_read_page;
     vehicle.logger.delay_ms = delay;
-    vehicle.logger.buffer = logger_buffer;
-    vehicle.logger.messages_per_page = MESSAGES_PER_PAGE;
+    vehicle.logger.messages_per_page = 3;
     vehicle.logger.sector_erase_time = 450;
     vehicle.logger.write_enable_time = 5;
     logger_init(&vehicle.logger);

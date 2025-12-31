@@ -10,7 +10,6 @@
 #include "logger.h"
 
 #define CMD_BUF_LEN 32
-#define MESSAGES_PER_PAGE 3
 
 typedef enum {
     BOOT_MODE_FLIGHT,
