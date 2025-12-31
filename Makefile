@@ -15,7 +15,8 @@ SOURCES = src/main.c \
           src/math.c \
           src/ins.c \
           src/logger.c \
-          src/vehicle.c
+          src/vehicle.c \
+          src/ring_buffer.c
 
 build: build/firmware.elf
 
