@@ -46,5 +46,6 @@ void vehicle_logger_erase_sector(uint16_t sector);
 void vehicle_logger_write_enable();
 void vehicle_logger_write_disable();
 void vehicle_logger_read_page(uint32_t page, uint8_t *data);
+void vehicle_logger_output_callback(char *str, size_t len);
 
 #endif // VEHICLE_H

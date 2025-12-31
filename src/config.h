@@ -1,0 +1,11 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define LOGGER_RING_BUF_SIZE 1024 // Must be a power of 2
+#define LOGGER_MSG_PER_PAGE 3
+#define LOGGER_SECTOR_ERASE_TIME 450
+#define LOGGER_WRITE_EN_TIME 5
+#define LOGGER_NUM_SECTORS 10
+#define LOGGER_NUM_PAGES 30
+
+#endif // CONFIG_H

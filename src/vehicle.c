@@ -88,55 +88,13 @@ void vehicle_update_calibrate() {
 }
 
 void vehicle_update_retreive() {
-    // Need to replace with actual number of pages
-    uint32_t num_pages = 30;
-
-    for (uint32_t i = 0; i < num_pages; i++) {
-        char buf[100];
-        snprintf(buf, sizeof(buf), "Reading page %ld out of %ld\r\n", i + 1,
-            num_pages);
-        uart_write_buf(UART1, buf, strlen(buf));
-
-        message_t messages[vehicle.logger.messages_per_page];
-        logger_read(&vehicle.logger, i, messages);
-
-        for (uint8_t j = 0; j < vehicle.logger.messages_per_page; j++) {
-            message_t message = messages[j];
-
-            char uart_buf[64];
-            snprintf(uart_buf, sizeof(uart_buf), "%ld,%.2f\r\n",
-                message.counter, (double)message.roll);
-            uart_write_buf(UART1, uart_buf, strlen(uart_buf));
-        }
-    }
-
-    uart_write_buf(UART1, "Finished\r\n", strlen("Finished\r\n"));
-
-    for (;;) {
-        spin(1);
-    }
+    logger_read_output(&vehicle.logger);
+    for (;;) spin(1);
 }
 
 void vehicle_update_erase() {
-    // Need to replace num_sectors with the actual number of sectors
-    // And preseve area with calibration data
-    uint16_t num_sectors = 10;
-
-    for (uint16_t i = 0; i < num_sectors; i++) {
-        logger_erase(&vehicle.logger, i);
-
-        char uart_buf[100];
-        snprintf(uart_buf, sizeof(uart_buf), "Erased %d out of %d\r\n",
-            i + 1, num_sectors);
-        uart_write_buf(UART1, uart_buf, strlen(uart_buf));
-    }
-
-    char uart_buf[100] = "Finished erase. Power cycle now.\r\n";
-    uart_write_buf(UART1, uart_buf, strlen(uart_buf));
-
-    for (;;) {
-        spin(1);
-    }
+    logger_erase_output(&vehicle.logger);
+    for (;;) spin(1);
 }
 
 boot_mode_t vehicle_run_cli() {
@@ -186,7 +144,6 @@ boot_mode_t vehicle_run_cli() {
             idx = 0;
         }
     }
-
 }
 
 void vehicle_imu_init() {
@@ -209,15 +166,13 @@ void vehicle_logger_init() {
     vehicle.logger.write_disable = vehicle_logger_write_disable;
     vehicle.logger.read_page = vehicle_logger_read_page;
     vehicle.logger.delay_ms = delay;
-    vehicle.logger.messages_per_page = 3;
-    vehicle.logger.sector_erase_time = 450;
-    vehicle.logger.write_enable_time = 5;
+    vehicle.logger.output_callback = vehicle_logger_output_callback;
     logger_init(&vehicle.logger);
 }
 
 void vehicle_logger_write_page(uint32_t page, uint8_t *data) {
     w25q128jv_write_page(&vehicle.flash, page, 0,
-        vehicle.logger.messages_per_page * sizeof(message_t), data);
+        LOGGER_MSG_PER_PAGE * sizeof(message_t), data);
 }
 
 void vehicle_logger_erase_sector(uint16_t sector) {
@@ -234,5 +189,9 @@ void vehicle_logger_write_disable() {
 
 void vehicle_logger_read_page(uint32_t page, uint8_t *data) {
     w25q128jv_read(&vehicle.flash, page, 0,
-        vehicle.logger.messages_per_page * sizeof(message_t), data);
+        LOGGER_MSG_PER_PAGE * sizeof(message_t), data);
+}
+
+void vehicle_logger_output_callback(char *str, size_t len) {
+    uart_write_buf(UART1, str, len);
 }
