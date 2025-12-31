@@ -19,6 +19,8 @@ void logger_write(logger_t *logger, message_t message) {
     logger->message_index++;
 
     if (logger->message_index == logger->messages_per_page) {
+        // First page works, second page doesn't work?
+        // Viewing the uint8_t data array in read with GDB, its 0xFF
         logger->write_page(logger->current_page, (uint8_t *)logger->buffer);
         logger->current_page++;
         logger->message_index = 0;
@@ -32,7 +34,8 @@ void logger_erase(logger_t *logger, uint16_t sector) {
     logger->erase_sector(sector);
     logger->delay_ms(logger->sector_erase_time);
 }
-
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
 /*
  * @brief Read one page and get message structs
  * 
@@ -53,3 +56,4 @@ void logger_read(logger_t *logger, uint32_t page, message_t *messages) {
     logger->write_enable();
     logger->delay_ms(logger->write_enable_time);
 }
+#pragma GCC pop_options
