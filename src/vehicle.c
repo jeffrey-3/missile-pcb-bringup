@@ -88,7 +88,8 @@ void vehicle_update_calibrate() {
 }
 
 void vehicle_update_retreive() {
-    uint32_t num_pages = 15;
+    // Need to replace with actual number of pages
+    uint32_t num_pages = 30;
 
     for (uint32_t i = 0; i < num_pages; i++) {
         char buf[100];
@@ -147,9 +148,9 @@ boot_mode_t vehicle_run_cli() {
 
         while (!uart_read_ready(UART1)) {
             if (timer_expired(&print_timer, 2000)) {
-                char uart_buf[100] = "missile command line interface\r\n"
-                    "(1) flight\r\n(2) calibrate\r\n(3) retreive\r\n"
-                    "(9) erase\r\n";
+                char uart_buf[100] = "Missile CLI\r\n"
+                    "(1) Flight\r\n(2) Calibrate\r\n(3) Fin Test\r\n"
+                    "(4) HITL\r\n(5) Retrieve\r\n(9) Erase\r\n";
                 uart_write_buf(UART1, uart_buf, strlen(uart_buf));
             }
         }
@@ -166,7 +167,7 @@ boot_mode_t vehicle_run_cli() {
             } else if (strcmp(cmd_buf, "2") == 0) {
                 uart_write_buf(UART1, "Calibrate Selected\r\n", 20);
                 return BOOT_MODE_CALIBRATE;
-            } else if (strcmp(cmd_buf, "3") == 0) {
+            } else if (strcmp(cmd_buf, "5") == 0) {
                 uart_write_buf(UART1, "Retrieve Selected\r\n", 19);
                 return BOOT_MODE_RETREIVE;
             } else if (strcmp(cmd_buf, "9") == 0) {

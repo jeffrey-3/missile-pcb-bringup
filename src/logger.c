@@ -50,7 +50,11 @@ void logger_write(logger_t *logger, message_t message) {
 /*
  * @brief Erase a sector in memory
  */
-void logger_erase(logger_t *logger, uint16_t sector) {
+void logger_erase(logger_t *logger, uint16_t sector) { 
+    // After every erase, the flash chip disables write, so must re-enable
+    logger->write_enable();
+    logger->delay_ms(logger->write_enable_time);
+
     logger->erase_sector(sector);
     logger->delay_ms(logger->sector_erase_time);
 }
