@@ -30,5 +30,6 @@ typedef struct {
 
 void logger_init(logger_t *logger);
 void logger_write(logger_t *logger, message_t message);
+void logger_erase(logger_t *logger, uint16_t sector);
 
 #endif // LOGGER_H

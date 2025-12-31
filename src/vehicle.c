@@ -86,9 +86,21 @@ void vehicle_update_retreive() {
 }
 
 void vehicle_update_erase() {
-    if (timer_expired(&vehicle.led_timer, 500)) {
-        gpio_write(board_pins.led, vehicle.led_on);
-        vehicle.led_on = !vehicle.led_on;
+    // Need to replace 2 with the actual number of sectors
+    // And preseve area with calibration data
+    for (uint16_t i = 0; i < 2; i++) {
+        logger_erase(&vehicle.logger, i);
+   
+        char uart_buf[100];
+        snprintf(uart_buf, sizeof(uart_buf), "Erased %d out of 2\r\n", i); 
+        uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+    }
+
+    char uart_buf[100] = "Finished erase. Power cycle now.\r\n";
+    uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+
+    for (;;) {
+        spin(1);
     }
 }
 
@@ -101,9 +113,9 @@ boot_mode_t vehicle_run_cli() {
 
         while (!uart_read_ready(UART1)) {
             if (timer_expired(&print_timer, 2000)) {
-                char uart_buf[100] = "Missile Command Line Interface\r\n"
-                    "(1) Flight\r\n(2) Calibrate\r\n(3) Retreive\r\n"
-                    "(9) Erase\r\n";
+                char uart_buf[100] = "missile command line interface\r\n"
+                    "(1) flight\r\n(2) calibrate\r\n(3) retreive\r\n"
+                    "(9) erase\r\n";
                 uart_write_buf(UART1, uart_buf, strlen(uart_buf));
             }
         }
@@ -160,6 +172,7 @@ void vehicle_logger_init() {
     message_t logger_buffer[messages_per_page];
 
     vehicle.logger.write_page = vehicle_logger_write_page;
+    vehicle.logger.erase_sector = vehicle_logger_erase_sector;
     vehicle.logger.write_enable = vehicle_logger_write_enable;
     vehicle.logger.write_disable = vehicle_logger_write_disable;
     vehicle.logger.delay_ms = delay;
@@ -168,7 +181,7 @@ void vehicle_logger_init() {
     vehicle.logger.sector_erase_time = 450;
     vehicle.logger.write_enable_time = 5;
 
-    // logger_init(&vehicle.logger);
+    logger_init(&vehicle.logger);
 }
 
 void vehicle_logger_write_page(uint32_t page, uint8_t *data) {
