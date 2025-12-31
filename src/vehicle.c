@@ -43,7 +43,7 @@ void vehicle_update_flight() {
         vehicle.counter++;
         message_t message = {
             .counter = vehicle.counter,
-            .roll = 1.45f
+            .roll = (float)get_time() // Test sensor data
         };
         logger_write(&vehicle.logger, message);
     }

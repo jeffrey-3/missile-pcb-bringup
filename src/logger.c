@@ -2,12 +2,7 @@
 
 void logger_init(logger_t *logger) {
     logger->message_index = 0;
-    logger->current_page = 2; // Set to 2 to see if pages other than 1 works...
-                            // YES IT DOES WORK AND READ WORKS
-                            // But the following pages don't work!
-                        // Maybe because I need write_disable()?
-                       // According to datasheet, right after write it sets 
-                        // write enable to zero!!!! so I need to enable again
+    logger->current_page = 0; 
         
     logger->write_enable();
     logger->delay_ms(logger->write_enable_time);
@@ -24,15 +19,12 @@ void logger_write(logger_t *logger, message_t message) {
     logger->message_index++;
 
     if (logger->message_index == logger->messages_per_page) {
-        // First page works, second page doesn't work?
-        // Viewing the uint8_t data array in read with GDB, its 0xFF
-        // Maybe after every write I need to write_disable or something??? no
         logger->write_page(logger->current_page, (uint8_t *)logger->buffer);
         logger->current_page++;
         logger->message_index = 0;
     } else {
-        logger->write_enable(); // Check top comments, see if this fix it
-        // THIS DOES FIX ISSUE
+        // After every write, the flash chip disables write, so must re-enable
+        logger->write_enable();
     }
 }
 
@@ -43,8 +35,7 @@ void logger_erase(logger_t *logger, uint16_t sector) {
     logger->erase_sector(sector);
     logger->delay_ms(logger->sector_erase_time);
 }
-#pragma GCC push_options
-#pragma GCC optimize ("O0")
+
 /*
  * @brief Read one page and get message structs
  * 
@@ -65,4 +56,3 @@ void logger_read(logger_t *logger, uint32_t page, message_t *messages) {
     logger->write_enable();
     logger->delay_ms(logger->write_enable_time);
 }
-#pragma GCC pop_options
