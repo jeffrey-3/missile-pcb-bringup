@@ -8,18 +8,45 @@ void ins_init(ins_t *ins) {
     ins->pos.x = 0.0f;
     ins->pos.y = 0.0f;
     ins->pos.z = 0.0f;
-    ins->first_update = true;
+    ins->acc_sum.x = 0.0f;
+    ins->acc_sum.y = 0.0f;
+    ins->acc_sum.z = 0.0f;
+    ins->state = INS_STATE_ALIGN;
 }
 
 void ins_update(ins_t *ins, float gx, float gy, float gz, float ax, float ay,
     float az, float dt) {
-    if (ins->first_update) {
-        float roll = atan2f(-ay, -az);
-        float pitch = atan2f(ax, sqrtf(ay*ay + az*az));
-        ins->q = quat_from_euler(roll, pitch, 0.0f);
-        ins->first_update = false;
+    switch (ins->state) {
+        case INS_STATE_ALIGN:
+            ins_align_update(ins, ax, ay, az);
+            break;
+        case INS_STATE_RUNNING:
+            ins_attitude_update(ins, gx, gy, gz, dt);
+            ins_position_update(ins, ax, ay, az, dt);
+            break;
     }
+}
 
+void ins_align_update(ins_t *ins, float ax, float ay, float az) {
+    ins->acc_sum.x += ax;
+    ins->acc_sum.y += ay;
+    ins->acc_sum.z += az;
+    ins->acc_count++;
+
+    if (ins->acc_count > INS_ALIGN_SAMPLES) {
+        float ax_avg = ins->acc_sum.x / (float)ins->acc_count;
+        float ay_avg = ins->acc_sum.y / (float)ins->acc_count;
+        float az_avg = ins->acc_sum.z / (float)ins->acc_count;
+
+        float roll = atan2f(-ay_avg, -az_avg);
+        float pitch = atan2f(ax_avg, sqrtf(ay_avg*ay_avg + az_avg*az_avg));
+
+        ins->q = quat_from_euler(roll, pitch, 0.0f);
+        ins->state = INS_STATE_RUNNING;
+    }
+}
+
+void ins_attitude_update(ins_t *ins, float gx, float gy, float gz, float dt) {
     quat_t dq;
     dq.w = 1.0f;
     dq.x = 0.5f * gx * dt;
@@ -28,7 +55,9 @@ void ins_update(ins_t *ins, float gx, float gy, float gz, float ax, float ay,
 
     ins->q = quat_mul(ins->q, dq);
     quat_normalize(&ins->q);
+}
 
+void ins_position_update(ins_t *ins, float ax, float ay, float az, float dt) {
     vec3_t acc_body = {ax * 9.81f, ay * 9.81f, az * 9.81f};
     ins->acc_world = quat_rotate_vector(ins->q, acc_body);
     ins->acc_world.z += 9.81f;
