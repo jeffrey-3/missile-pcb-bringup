@@ -16,6 +16,10 @@ void ins_init(ins_t *ins) {
 
 void ins_update(ins_t *ins, float gx, float gy, float gz, float ax, float ay,
     float az, float dt) {
+    gx -= GYRO_OFF_X;
+    gy -= GYRO_OFF_Y;
+    gz -= GYRO_OFF_Z;
+
     switch (ins->state) {
         case INS_STATE_ALIGN:
             ins_align_update(ins, ax, ay, az);

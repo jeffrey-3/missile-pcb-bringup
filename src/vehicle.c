@@ -35,42 +35,21 @@ void vehicle_update() {
 }
 
 void vehicle_update_flight() {
+    float accel[3];
+    float gyro[3];
+
     if (timer_expired(&vehicle.led_timer, 500)) {
         gpio_write(board_pins.led, vehicle.led_on);
         vehicle.led_on = !vehicle.led_on;
     }
 
     if (timer_expired(&vehicle.ins_timer, 10)) {
-        float accel[3];
-        float gyro[3];
         icm45686_read_accel(&vehicle.imu, accel);
         icm45686_read_gyro(&vehicle.imu, gyro);
-
-        gyro[0] = gyro[0] * DEG2RAD - 0.00795f;
-        gyro[1] = gyro[1] * DEG2RAD + 0.00295f;
-        gyro[2] = gyro[2] * DEG2RAD - 0.00020f;
 
         ins_update(&vehicle.ins, gyro[0], gyro[1], gyro[2],
             accel[0], accel[1], accel[2], 0.01f);
 
-        float roll;
-        float pitch;
-        float yaw;
-        quat_to_euler(vehicle.ins.q, &roll, &pitch, &yaw);
-
-        roll *= RAD2DEG;
-        pitch *= RAD2DEG;
-        yaw *= RAD2DEG;
-
-        char uart_buf[64];
-        snprintf(uart_buf, sizeof(uart_buf),
-            "%.0f,%.0f,%.0f,%.1f,%.1f,%.1f\r\n",
-            (double)roll, (double)pitch, (double)yaw,
-            (double)vehicle.ins.vel.x, (double)vehicle.ins.vel.y,
-            (double)vehicle.ins.vel.z);
-        uart_write_buf(UART1, uart_buf, strlen(uart_buf));
-
-        // Log data
         vehicle.counter++;
         message_t message = {
             .counter = vehicle.counter,
@@ -83,6 +62,8 @@ void vehicle_update_flight() {
             .az = accel[2]
         };
         logger_write(&vehicle.logger, message);
+
+        vehicle_print_state();
     }
 }
 
@@ -156,6 +137,26 @@ boot_mode_t vehicle_run_cli() {
             idx = 0;
         }
     }
+}
+
+void vehicle_print_state() {
+    float roll;
+    float pitch;
+    float yaw;
+    char uart_buf[64];
+
+    quat_to_euler(vehicle.ins.q, &roll, &pitch, &yaw);
+
+    roll *= RAD2DEG;
+    pitch *= RAD2DEG;
+    yaw *= RAD2DEG;
+
+    snprintf(uart_buf, sizeof(uart_buf),
+        "%.0f,%.0f,%.0f,%.1f,%.1f,%.1f\r\n",
+        (double)roll, (double)pitch, (double)yaw,
+        (double)vehicle.ins.vel.x, (double)vehicle.ins.vel.y,
+        (double)vehicle.ins.vel.z);
+    uart_write_buf(UART1, uart_buf, strlen(uart_buf));
 }
 
 void vehicle_imu_init() {

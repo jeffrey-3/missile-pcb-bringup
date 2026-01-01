@@ -35,6 +35,7 @@ void vehicle_update_calibrate();
 void vehicle_update_retreive();
 void vehicle_update_erase();
 boot_mode_t vehicle_run_cli();
+void vehicle_print_state();
 void vehicle_imu_init();
 void vehicle_flash_init();
 void vehicle_ins_init();

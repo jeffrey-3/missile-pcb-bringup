@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "quaternion.h"
+#include "config.h"
 
 #define INS_ALIGN_SAMPLES 100
 

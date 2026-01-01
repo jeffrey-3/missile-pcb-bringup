@@ -8,4 +8,8 @@
 #define LOGGER_NUM_SECTORS 10
 #define LOGGER_NUM_PAGES 30
 
+#define GYRO_OFF_X 0.00795f
+#define GYRO_OFF_Y -0.00295f
+#define GYRO_OFF_Z 0.0002f
+
 #endif // CONFIG_H

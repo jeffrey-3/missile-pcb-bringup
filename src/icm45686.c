@@ -54,7 +54,7 @@ void icm45686_read_gyro(icm45686_t *device, float *data) {
     int16_t raw_z = (int16_t)((rx_buf[6] << 8) | rx_buf[5]);
 
     // Sensitivity scale factor is in table 3.1 of datasheet
-    data[0] = raw_x / 8.2f;
-    data[1] = raw_y / 8.2f;
-    data[2] = raw_z / 8.2f;
+    data[0] = raw_x / 8.2f * DEG2RAD;
+    data[1] = raw_y / 8.2f * DEG2RAD;
+    data[2] = raw_z / 8.2f * DEG2RAD;
 }
