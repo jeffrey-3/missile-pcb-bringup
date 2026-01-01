@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "hal.h"
+#include "hal/hal.h"
 
 typedef struct {
     uint16_t led;

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include "ring_buffer.h"
+#include "util/ring_buffer.h"
 #include "config.h"
 
 typedef struct __attribute__((packed)) {

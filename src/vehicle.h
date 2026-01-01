@@ -2,10 +2,10 @@
 #define VEHICLE_H
 
 #include "board.h"
-#include "math.h"
-#include "icm45686.h"
-#include "w25q128jv.h"
-#include "quaternion.h"
+#include "math/math.h"
+#include "peripherals/icm45686.h"
+#include "peripherals/w25q128jv.h"
+#include "math/quaternion.h"
 #include "ins.h"
 #include "logger.h"
 

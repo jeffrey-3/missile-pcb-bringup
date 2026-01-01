@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "math.h"
+#include "../math/math.h"
 
 #define ICM45686_WHO_AM_I 0x72
 #define ICM45686_PWR_MGMT0 0x10

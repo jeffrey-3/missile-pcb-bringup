@@ -7,16 +7,16 @@ LDFLAGS ?= -Tlink.ld -nostartfiles -nostdlib --specs nano.specs \
 SOURCES = src/main.c \
           src/startup.c \
           src/syscalls.c \
-          src/hal.c \
+          src/hal/hal.c \
           src/board.c \
-          src/icm45686.c \
-          src/w25q128jv.c \
-          src/quaternion.c \
-          src/math.c \
+          src/peripherals/icm45686.c \
+          src/peripherals/w25q128jv.c \
+          src/math/quaternion.c \
+          src/math/math.c \
           src/ins.c \
           src/logger.c \
           src/vehicle.c \
-          src/ring_buffer.c
+          src/util/ring_buffer.c
 
 build: build/firmware.elf
 
