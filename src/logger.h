@@ -9,7 +9,13 @@
 
 typedef struct __attribute__((packed)) {
     uint32_t counter;
-    float roll;
+    uint32_t time;
+    float gx;
+    float gy;
+    float gz;
+    float ax;
+    float ay;
+    float az;
 } message_t;
 
 typedef void (*logger_write_page_t)(uint32_t page, uint8_t *data);

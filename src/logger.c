@@ -95,8 +95,11 @@ void logger_read_output(logger_t *logger) {
             message_t message = messages[j];
 
             char uart_buf[64];
-            snprintf(uart_buf, sizeof(uart_buf), "%ld,%.2f\r\n",
-                message.counter, (double)message.roll);
+            snprintf(uart_buf, sizeof(uart_buf),
+                "%ld,%ld,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\r\n",
+                message.counter, message.time, (double)message.gx,
+                (double)message.gy, (double)message.gz, (double)message.ax,
+                (double)message.ay, (double)message.az);
             logger->output_callback(uart_buf, strlen(uart_buf));
         }
     }

@@ -38,14 +38,6 @@ void vehicle_update_flight() {
     if (timer_expired(&vehicle.led_timer, 500)) {
         gpio_write(board_pins.led, vehicle.led_on);
         vehicle.led_on = !vehicle.led_on;
-
-        // Log data
-        vehicle.counter++;
-        message_t message = {
-            .counter = vehicle.counter,
-            .roll = (float)get_time() // Test sensor data
-        };
-        logger_write(&vehicle.logger, message);
     }
 
     if (timer_expired(&vehicle.ins_timer, 10)) {
@@ -77,6 +69,20 @@ void vehicle_update_flight() {
             (double)vehicle.ins.vel.x, (double)vehicle.ins.vel.y,
             (double)vehicle.ins.vel.z);
         uart_write_buf(UART1, uart_buf, strlen(uart_buf));
+
+        // Log data
+        vehicle.counter++;
+        message_t message = {
+            .counter = vehicle.counter,
+            .time = get_time(),
+            .gx = gyro[0],
+            .gy = gyro[1],
+            .gz = gyro[2],
+            .ax = accel[0],
+            .ay = accel[1],
+            .az = accel[2]
+        };
+        logger_write(&vehicle.logger, message);
     }
 }
 
