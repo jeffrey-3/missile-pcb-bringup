@@ -29,4 +29,4 @@ void ins_align_update(ins_t *ins, float ax, float ay, float az);
 void ins_attitude_update(ins_t *ins, float gx, float gy, float gz, float dt);
 void ins_position_update(ins_t *ins, float ax, float ay, float az, float dt);
 
-#endif /* INS_H */
+#endif // INS_H

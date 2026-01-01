@@ -1,5 +1,5 @@
-#ifndef INC_RING_BUFFER_H
-#define INC_RING_BUFFER_H
+#ifndef RING_BUFFER_H
+#define RING_BUFFER_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -17,4 +17,4 @@ bool ring_buffer_write(ring_buffer_t* rb, uint8_t byte);
 bool ring_buffer_read(ring_buffer_t* rb, uint8_t* byte);
 uint32_t ring_buffer_count(ring_buffer_t* rb);
 
-#endif // INC_RING_BUFFER_H
+#endif // RING_BUFFER_H

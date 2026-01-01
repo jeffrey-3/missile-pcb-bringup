@@ -98,7 +98,8 @@ void vehicle_update_erase() {
 }
 
 boot_mode_t vehicle_run_cli() {
-    char cmd_buf[CMD_BUF_LEN];
+    uint8_t cmd_buf_len = 32;
+    char cmd_buf[cmd_buf_len];
     uint8_t idx = 0;
     uint32_t print_timer = 0;
     uint32_t start_time = get_time();
@@ -143,7 +144,7 @@ boot_mode_t vehicle_run_cli() {
             continue;
         }
 
-        if (idx < (CMD_BUF_LEN - 1)) {
+        if (idx < (cmd_buf_len - 1)) {
             cmd_buf[idx++] = c;
         } else {
             idx = 0;

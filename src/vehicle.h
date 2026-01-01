@@ -9,8 +9,6 @@
 #include "ins.h"
 #include "logger.h"
 
-#define CMD_BUF_LEN 32
-
 typedef enum {
     BOOT_MODE_FLIGHT,
     BOOT_MODE_CALIBRATE,

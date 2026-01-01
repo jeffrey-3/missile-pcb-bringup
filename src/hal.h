@@ -69,4 +69,4 @@ uint8_t spi_transfer(struct spi *spi, uint8_t tx_data);
 void spi_transfer_buf(struct spi *spi, const uint8_t *tx_buf, uint8_t *rx_buf,
     size_t len);
 
-#endif /* HAL_H */
+#endif // HAL_H

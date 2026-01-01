@@ -23,4 +23,4 @@ uint8_t icm45686_read_id(icm45686_t *device);
 void icm45686_read_accel(icm45686_t *device, float *data);
 void icm45686_read_gyro(icm45686_t *device, float *data);
 
-#endif /* ICM45686_H */
+#endif // ICM45686_H
